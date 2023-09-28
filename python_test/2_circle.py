@@ -17,7 +17,6 @@ print(round(s_circle,4))
 point = (23, 34)
 # где 23 - координата х, 34 - координата у
 distance=(point[0]**2+point[1]**2)**0.5
-print(distance)
 print(distance<=radius)
 # Если точка point лежит внутри того самого круга (radius = 42), то выведите на консоль True,
 # Или False, если точка лежит вовне круга.
