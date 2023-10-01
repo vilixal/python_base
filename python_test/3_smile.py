@@ -9,7 +9,6 @@ import simple_draw as sd
 # Параметры функции: кордината X, координата Y, цвет.
 # Вывести 10 смайликов в произвольных точках экрана.
 def smile(x, y, color):
-    size = 50
     point1 = sd.get_point(x - size, y - size * 3 / 4)
     point2 = sd.get_point(x + size, y + size * 3 / 4)
     point3 = sd.get_point(x - size / 3, y + size / 4)
@@ -25,6 +24,7 @@ def smile(x, y, color):
 
 
 # size = input('Размер смайла (рекомендованный 50): ')
+size=50
 for _ in range(10):
     point = sd.random_point()
     x, y = point.x, point.y
