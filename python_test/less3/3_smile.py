@@ -18,8 +18,8 @@ def smile(x, y, color):
     point7 = sd.get_point(x + size / 5, y - size / 3)
     point8 = sd.get_point(x + size * 2 / 3, y - size / 10)
     sd.ellipse(point1, point2, color=color, width=1)
-    sd.circle(point3, radius=size / 10, color=color)
-    sd.circle(point4, radius=size / 10, color=color)
+    sd.circle(point3, radius=int(size / 10), color=color)
+    sd.circle(point4, radius=int(size / 10), color=color)
     sd.lines([point5, point6, point7, point8], color=color)
 
 
