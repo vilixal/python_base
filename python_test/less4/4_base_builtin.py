@@ -15,10 +15,10 @@ int()
 float()
 bool()
 str()
-list()
-tuple()
-dict()
-set()
+list()  # список
+tuple()  # тьюпл(неизменяемый)
+dict()  # словарь
+set()  # множество(уникальный коллаж)
 
 int('123')
 int(123.45)
@@ -44,7 +44,6 @@ list(my_tuple)
 set(my_tuple)
 
 dict([('a', 2), ('b', 3), ])
-
 
 # --- Числа ---
 
@@ -129,7 +128,7 @@ isinstance(profit, list)
 type(profit)
 
 # open() - открыть файл на файловой системе
-ff = open('lesson_004/lecture_snippets/05_builtin.py', 'r')
+ff = open('less4/4_base_builtin.py', 'r',encoding='UTF8')
 for line in ff.readlines():
     print(line, end='')
 ff.close()

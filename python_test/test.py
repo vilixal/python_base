@@ -1,8 +1,5 @@
-def factorial(n):
-    if n == 1:
-        return 1
-    factorial_n_minus_1 = factorial(n=n - 1)
-    return n * factorial_n_minus_1
-
-
-print(factorial(1000))
+# -*- coding: utf-8 -*-
+ff = open('less4/4_base_builtin.py', 'r',encoding='UTF8')
+for line in ff.readlines():
+    print(line, end='')
+ff.close()
