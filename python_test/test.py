@@ -1,4 +1,11 @@
-ff = open('less4/4_base_builtin.py', 'r',encoding='UTF8')
-for line in ff.readlines():
-    print(line, end='')
-ff.close()
+import simple_draw as sd
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
+print((40-sd.random_number(b=80))/100)
