@@ -41,6 +41,7 @@ while date <= date5:
     if (date.year == fatherly_year and date.month != 12) or (date.year == fatherly_year-1 and date.month == 12):
         subsidies_year += subsidies_day
     subsidies += subsidies_day
+    print(date,', субсидии за день -',subsidies_day,', ключевая ставка -',stavka_day)
     date += dt.timedelta(1)
 print('Субсидии за всё время', subsidies)
 print('Субсидии за отчетный год', subsidies_year)
