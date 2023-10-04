@@ -17,12 +17,12 @@ ratio_izm = 1.0
 date_start = dt.date(2023, 1, 19)
 date_end = dt.date(2023, 3, 19)
 
-fatherly_year = 2023
-fatherly_month = 4
+fatherly_year = 2022
+fatherly_month = 10
 
 date = date1
 
-subsidies_day, subsidies_month, subsidies, dolg, stavka, stavka_day, subsidies_year, ratio = 0, 0, 0, 0, 0, 0, 0, 0
+subsidies_day, subsidies_month, subsidies_next_month, subsidies, dolg, stavka, stavka_day, subsidies_year, subsidies_next_year, ratio = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 while date <= date5:
     subsidies_day, dolg, stavka_day = 0, 0, 1
     # расчет долга за день
@@ -47,12 +47,20 @@ while date <= date5:
     # субсидии за отчетный месяц
     if date.year == fatherly_year and date.month == fatherly_month:
         subsidies_month += subsidies_day
+    # субсидии за месяц, следующий за отчетным
+    if date.year == fatherly_year and date.month == fatherly_month + 1:
+        subsidies_next_month += subsidies_day
     # субсидии за отчетный год
     if (date.year == fatherly_year and date.month != 12) or (date.year == fatherly_year - 1 and date.month == 12):
         subsidies_year += subsidies_day
+    # субсидии за год, следующий за отчетным
+    if (date.year == fatherly_year+1 and date.month != 12) or (date.year == fatherly_year and date.month == 12):
+        subsidies_next_year += subsidies_day
     subsidies += subsidies_day
     print(date, ', субсидии за день -', subsidies_day, ', ключевая ставка -', stavka_day)
     date += dt.timedelta(1)
 print('Субсидии за всё время', subsidies)
 print('Субсидии за отчетный год', subsidies_year)
+print('Субсидии за за год, следующий за отчетным {}'.format(subsidies_next_year))
 print('Субсидии за отчетный месяц', subsidies_month)
+print('Субсидии за за месяц, следующий за отчетным', subsidies_next_month)
