@@ -12,22 +12,32 @@ date_s2 = dt.date(2022, 9, 19)
 stavka1, stavka2 = 8, 7.5
 stavka_list = {date_s1: stavka1, date_s2: stavka2}
 
-fatherly_year = 2022
-fatherly_month = 10
+ratio_base = 1.0
+ratio_izm = 1.0
+date_start = dt.date(2023, 1, 19)
+date_end = dt.date(2023, 3, 19)
+
+fatherly_year = 2023
+fatherly_month = 4
 
 date = date1
 
-subsidies_day, subsidies_month, subsidies, dolg, stavka, stavka_day, subsidies_year = 0, 0, 0, 0, 0, 0, 0
+subsidies_day, subsidies_month, subsidies, dolg, stavka, stavka_day, subsidies_year, ratio = 0, 0, 0, 0, 0, 0, 0, 0
 while date <= date5:
     subsidies_day, dolg, stavka_day = 0, 0, 1
     # расчет долга за день
     for date_operation, operation in plan.items():
         if date_operation < date:
             dolg += operation
+    # расчет коэффициента за день
+    if date_start <= date <= date_end:
+        ratio = ratio_izm
+    else:
+        ratio = ratio_base
     # расчет ставки за день
     for date_operation, stavka in stavka_list.items():
         if date_operation < date:
-            stavka_day = stavka
+            stavka_day = stavka * ratio
     # количество дней в году
     if date.year % 4 != 0:
         year = 365
@@ -38,10 +48,10 @@ while date <= date5:
     if date.year == fatherly_year and date.month == fatherly_month:
         subsidies_month += subsidies_day
     # субсидии за отчетный год
-    if (date.year == fatherly_year and date.month != 12) or (date.year == fatherly_year-1 and date.month == 12):
+    if (date.year == fatherly_year and date.month != 12) or (date.year == fatherly_year - 1 and date.month == 12):
         subsidies_year += subsidies_day
     subsidies += subsidies_day
-    print(date,', субсидии за день -',subsidies_day,', ключевая ставка -',stavka_day)
+    print(date, ', субсидии за день -', subsidies_day, ', ключевая ставка -', stavka_day)
     date += dt.timedelta(1)
 print('Субсидии за всё время', subsidies)
 print('Субсидии за отчетный год', subsidies_year)
