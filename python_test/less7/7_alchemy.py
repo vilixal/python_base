@@ -19,6 +19,38 @@
 #   print(Water(), '+', Air(), '=', Water() + Air())
 #   print(Fire(), '+', Air(), '=', Fire() + Air())
 
+class Water:
+
+    def __add__(self, other):
+        if str(other)=='Воздух':
+            result=Storm()
+        else:
+            result = Flash()
+        return result
+
+    def __str__(self):
+        return 'Вода'
+
+
+
+class Air:
+
+    def __str__(self):
+        return 'Воздух'
+
+class Storm:
+
+    def __str__(self):
+        return 'Шторм'
+
+class Flash:
+
+    def __str__(self):
+        return 'Молния'
+
+print(Water(), '+', Flash(), '=', Water() + Flash())
+
+
 
 
 # Усложненное задание (делать по желанию)
