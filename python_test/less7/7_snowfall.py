@@ -33,7 +33,7 @@ class Snowflake:
 
 
     def move(self):
-        self.y -= 5+(self.length-20)/5
+        self.y -= 5+(self.length-20)/3
         self.x += randint(-10,10)
 
     def draw(self):
@@ -45,7 +45,7 @@ class Snowflake:
 
 
 # flake = Snowflake()
-count=20
+count=50
 flakes = get_flakes(count=count)
 
 while True:

@@ -51,9 +51,11 @@ class Flash:
 
     def __str__(self):
         return 'Молния'
-
-print(Water(), '+', Flash(), '=', Water() + Flash())
 water=Water()
+air=Air()
+flash=Flash()
+# print(Water(), '+', Flash(), '=', Water() + Flash())
+print(water, '+', air, '=', water + flash)
 if water.check()!=1:
     print(1)
 else:
