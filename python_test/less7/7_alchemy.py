@@ -28,6 +28,10 @@ class Water:
             result = Flash()
         return result
 
+    def check(self):
+        param=1
+        return param
+
     def __str__(self):
         return 'Вода'
 
@@ -49,6 +53,11 @@ class Flash:
         return 'Молния'
 
 print(Water(), '+', Flash(), '=', Water() + Flash())
+water=Water()
+if water.check()!=1:
+    print(1)
+else:
+    print(0)
 
 
 
