@@ -13,12 +13,12 @@ stavka1, stavka2 = 8, 7.5
 stavka_list = {date_s1: stavka1, date_s2: stavka2}
 
 ratio_base = 1.0
-ratio_izm = 1.0
-date_start = dt.date(2023, 1, 19)
-date_end = dt.date(2023, 3, 19)
+ratio_izm = 0.9
+date_start = dt.date(2022, 10, 1)
+date_end = dt.date(2022, 12, 31)
 
-fatherly_year = 2022
-fatherly_month = 10
+fatherly_year = 2023
+fatherly_month = 4
 
 date = date1
 
@@ -61,6 +61,6 @@ while date <= date5:
     date += dt.timedelta(1)
 print('Субсидии за всё время', subsidies)
 print('Субсидии за отчетный год', subsidies_year)
-print('Субсидии за за год, следующий за отчетным {}'.format(subsidies_next_year))
 print('Субсидии за отчетный месяц', subsidies_month)
 print('Субсидии за за месяц, следующий за отчетным', subsidies_next_month)
+print('Субсидии за за год, следующий за отчетным {}'.format(subsidies_next_year))
