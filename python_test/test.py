@@ -1,3 +1,2 @@
-from random import randint
-
-print(randint(-10,10))
+_hidden_numbers=[]
+print(str(enumerate(_hidden_numbers)))

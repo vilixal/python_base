@@ -63,7 +63,7 @@ while True:
         flake.move()
         flake.draw()
     sd.finish_drawing()
-    sd.sleep(0.1)
+    sd.sleep(0.05)
     if sd.user_want_exit():
         break
 
