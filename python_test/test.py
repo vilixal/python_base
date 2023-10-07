@@ -1,3 +1,4 @@
-from termcolor import cprint
+from colorama import Fore, init
+init(autoreset=True)
 
-cprint('================== День ==================', color='red')
+print(Fore.GREEN + 'blabla')

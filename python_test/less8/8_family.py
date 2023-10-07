@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from termcolor import cprint
+from colorama import Fore, init
+init(autoreset=True)
 from random import randint
 
 ######################################################## Часть первая
@@ -129,6 +130,9 @@ class Wife(Man):
                 self.buy_fur_coat(house)
         elif self.house.food <=60:
             self.shopping(house)
+        else:
+            self.eat(house, 30)
+
 
 
     def shopping(self,house):
@@ -155,12 +159,12 @@ serge = Husband('Сережа',home)
 masha = Wife('Маша',home)
 
 for day in range(10):
-    cprint('================== День {} =================='.format(day), color='red')
+    print(Fore.GREEN + '================== День {} =================='.format(day))
     serge.act(home)
     masha.act(home)
-    cprint(serge, color='yellow')
-    cprint(masha, color='yellow')
-    cprint(home, color='yellow')
+    print(Fore.YELLOW + str(serge))
+    print(Fore.YELLOW + str(masha))
+    print(Fore.YELLOW + str(home))
 
 
 ######################################################## Часть вторая
