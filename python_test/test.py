@@ -1,2 +1,3 @@
-_hidden_numbers=[]
-print(str(enumerate(_hidden_numbers)))
+from termcolor import cprint
+
+cprint('================== День ==================', color='red')
