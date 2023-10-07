@@ -61,7 +61,7 @@ class Man:
         self.name = name
         self.money = 0
 
-    def eat(self, house, food):
+    def eat(self, food):
         self.fullness += food
         self.house.food -= food
         print('{} съел еды {}. Сытость {}'.format(self.name,food,self.fullness))
@@ -75,18 +75,17 @@ class Husband(Man):
     def __init__(self, name, house):
         super().__init__(name=name)
         self.house = house
-        self.money = 0
 
     def __str__(self):
         return super().__str__()
 
-    def act(self,house):
+    def act(self):
         if self.money >= 150:
             self.house.safe +=150
             self.money -= 150
             print('{} положил 150 в сейф'.format(self.name))
         if self.fullness <= 10:
-            self.eat(house,30)
+            self.eat(30)
         elif self.happi <=20:
             self.gaming()
         elif self.house.safe <=50:
@@ -112,14 +111,13 @@ class Wife(Man):
     def __init__(self, name, house):
         super().__init__(name=name)
         self.house = house
-        self.money = 0
 
     def __str__(self):
         return super().__str__()
 
-    def act(self,house):
+    def act(self):
         if self.fullness <= 10:
-            self.eat(house,30)
+            self.eat(30)
         elif self.happi <=40:
             if house.money + self.money < 350:
                 grab_money = self.house.money
@@ -127,15 +125,15 @@ class Wife(Man):
                 self.house.money = 0
                 print('{} взяла из сейфа деньги {} на будущую шубу'.format(self.name, grab_money))
             else:
-                self.buy_fur_coat(house)
+                self.buy_fur_coat()
         elif self.house.food <=60:
-            self.shopping(house)
+            self.shopping()
         else:
-            self.eat(house, 30)
+            self.eat( 30)
 
 
 
-    def shopping(self,house):
+    def shopping(self):
         grab_money = 100 - self.money
         self.money += grab_money
         self.house.safe -= grab_money
@@ -144,7 +142,7 @@ class Wife(Man):
         print('{} взяла {} из сейфа и купила 100 еды'.format(self.name, grab_money))
 
 
-    def buy_fur_coat(self,house):
+    def buy_fur_coat(self):
         grab_money = 60 - self.money
         self.money += grab_money
         self.house.safe -= grab_money
@@ -160,8 +158,8 @@ masha = Wife('Маша',home)
 
 for day in range(365):
     print(Fore.GREEN + '================== День {} =================='.format(day))
-    serge.act(home)
-    masha.act(home)
+    serge.act()
+    masha.act()
     print(Fore.YELLOW + str(serge))
     print(Fore.YELLOW + str(masha))
     print(Fore.YELLOW + str(home))
