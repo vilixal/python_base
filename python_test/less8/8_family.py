@@ -158,7 +158,7 @@ home = House()
 serge = Husband('Сережа',home)
 masha = Wife('Маша',home)
 
-for day in range(10):
+for day in range(365):
     print(Fore.GREEN + '================== День {} =================='.format(day))
     serge.act(home)
     masha.act(home)
