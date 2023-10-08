@@ -4,6 +4,7 @@ import os, time, shutil
 import zipfile
 from pprint import pprint
 
+
 # Нужно написать скрипт для упорядочивания фотографий (вообще любых файлов)
 # Скрипт должен разложить файлы из одной папки по годам и месяцам в другую.
 # Например, так:
@@ -52,20 +53,16 @@ create_dir(temp_dir)
 with zipfile.ZipFile(zip_name, 'r') as zf:
     for file in zf.infolist():
         file_name = os.path.basename(file.filename)
-        # file_path = os.path.normpath(file.filename)
         file_date = list(file.date_time)
         if len(str(file_date[1])) == 1:
             file_date[1] = '0' + str(file_date[1])
         if file.is_dir() is not True:
             sort.append([file_name, file_date])
         zf.extract(file, path=temp_dir)
-    print(sort)
 
 create_dir(sorted_dir)
 
 for dirpath, dirnames, filenames in os.walk(temp_dir):
-    print(dirpath, dirnames, filenames)
-
     for file in filenames:
         full_file_path = os.path.join(dirpath, file)
         print(full_file_path)
@@ -74,10 +71,6 @@ for dirpath, dirnames, filenames in os.walk(temp_dir):
                 full_new_path = os.path.join(sorted_dir, str(filedata[1][0]), str(filedata[1][1]))
                 create_dir(full_new_path, 'add')
                 shutil.copy2(full_file_path, full_new_path)
-
-
-
-
 
 # Усложненное задание (делать по желанию)
 # Нужно обрабатывать zip-файл, содержащий фотографии, без предварительного извлечения файлов в папку.
