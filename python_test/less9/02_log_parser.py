@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
 
 # Имеется файл events.txt вида:
 #
@@ -18,8 +19,22 @@
 #
 # Входные параметры: файл для анализа, файл результата
 # Требования к коду: он должен быть готовым к расширению функциональности. Делать сразу на классах.
+event = 'NOK'
+sort = {}
+with open('events.txt','r') as file:
+    for line in file:
+        if event in line:
+            time_event = line[0:17] + line[27]
+            if time_event in sort:
+                sort[time_event] += 1
+            else:
+                sort[time_event] = 1
 
-# TODO здесь ваш код
+pprint(sort)
+
+
+
+
 
 # После выполнения первого этапа нужно сделать группировку событий
 #  - по часам

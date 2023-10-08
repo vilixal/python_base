@@ -1,13 +1,7 @@
-stat = {'a':1,'b':2,'e':5,'c':3}
-print(stat)
-list = list(stat.items())
-print(list)
-list.sort()
-print(list)
-print()
-print(sorted(stat.items()))
-
-def sort_key(e):
-    return e[1]
-
-print(sorted(stat.items(),key=sort_key))
+line = '[2018-05-17 01:57:16.665804] NOK'
+date, time, res = line.split(' ')
+dt = date + ' ' + time[:5] + time[-1:]
+print(date)
+print(time)
+print(res)
+print(dt)
