@@ -19,6 +19,5 @@
 
 ENLIGHTENMENT_CARMA_LEVEL = 777
 
-# TODO здесь ваш код
 
 # https://goo.gl/JnsDqu
