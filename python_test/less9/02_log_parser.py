@@ -24,11 +24,8 @@ sort = {}
 with open('events.txt','r') as file:
     for line in file:
         if event in line:
-            time_event = line[0:17] + line[27]
-            if time_event in sort:
-                sort[time_event] += 1
-            else:
-                sort[time_event] = 1
+            time_event = line[1:17]
+            sort[time_event] = sort.setdefault(time_event,0)+1
 
 pprint(sort)
 
