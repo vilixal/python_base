@@ -1,28 +1,45 @@
-def check_lucky(number):
-    i,j=0,0
-    number=str(number)
-    len_n=len(number)
-    if len_n>2 and len_n%2:
-        left_n = number[:len_n//2]
-        right_n= number[len_n//2+1:]
-        for num in left_n:
-            i+=int(num)
-        for num in right_n:
-            j+=int(num)
-        return i==j
+import random
+import time
+from collections import defaultdict
+from threading import Thread
+
+FISH = (None, 'плотва', 'окунь', 'лещ')
 
 
-def get_prime_numbers(n):
-    prime_numbers = []
-    for number in range(2, n+1):
-        for prime in prime_numbers:
-            if number % prime == 0:
-                break
-        else:
-            prime_numbers.append(number)
-    return prime_numbers
+class Fisher(Thread):
+
+    def __init__(self, name, worms, *args, **kwargs):
+        super(Fisher, self).__init__(*args, **kwargs)
+        self.name = name
+        self.worms = worms
+
+    def run(self):
+        catch = defaultdict(int)
+        for worm in range(self.worms):
+            print(f'{self.name}: Червяк № {worm} - Забросил, ждем...', flush=True)
+            _ = 3 ** (random.randint(50, 70) * 10000)
+            fish = random.choice(FISH)
+            if fish is None:
+                print(f'{self.name}: Тьфу, сожрали червяка...', flush=True)
+            else:
+                print(f'{self.name}: Ага, у меня {fish}', flush=True)
+                catch[fish] += 1
+        print(f'Итого рыбак {self.name} поймал:')
+        for fish, count in catch.items():
+            print(f'    {fish} - {count}')
 
 
-for number in get_prime_numbers(n=50000):
-    if check_lucky(number):
-        print(number)
+vasya = Fisher(name='Вася', worms=10)
+kolya = Fisher(name='Коля', worms=10)
+
+print('.' * 20, 'Они пошли на рыбалку')
+
+vasya.start()
+kolya.start()
+
+print('.' * 20, 'Ждем пока они вернутся...')
+
+vasya.join()
+kolya.join()
+
+print('.' * 20, 'Итак, они вернулись')
