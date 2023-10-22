@@ -11,7 +11,7 @@ def my_sort_v1(slist):
                 was_swap = True
     return slist
 
-def my_sort_v2(slist):
+def my_sort(slist):
     if len(slist) <= 1:
         return slist
     pivot = slist[0]
@@ -25,5 +25,5 @@ def my_sort_v2(slist):
     return my_sort(less_then) + [pivot, ] + my_sort(more_then)
 
 
-def my_sort(slist):
+def my_sort_v2(slist):
     return list(set(sorted(slist)))
