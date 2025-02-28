@@ -1,1 +1,3 @@
-print((0,)*11)
+timestamp, process_id, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute = (
+                                                                                                                                      '',) * 12
+print(timestamp, process_id, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute)

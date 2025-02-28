@@ -1,2 +1,97 @@
-Новый файл2 321
- 23 212
+2025-02-14T10:52:09.4780 (2099930:0x7f077c10b440#7068) EXECUTE_STATEMENT_FINISH
+	ncore-bank (ATT_777480, SYSDBA:NONE, WIN1251, TCPv4:127.0.0.1/40084)
+	NCORE:[JOB] - Задача архивации журнала XML-сообщений (DX_LOG):2099786
+		(TRA_633123398, READ_COMMITTED | READ_CONSISTENCY | WAIT 10 | READ_WRITE)
+
+Statement 89566:
+-------------------------------------------------------------------------------
+SELECT FIRST 100000 DX_LOG.ADAPTER_ID,DX_LOG.ADAPTER_METANAME,DX_LOG.ATTACH_COUNT,DX_LOG.ATTACH_SIZE,DX_LOG.DATA,DX_LOG.DATA_LENGTH,DX_LOG.DESCRIPTION,DX_LOG.DOCUMENT_ID,DX_LOG.EVENT_CODE,DX_LOG.EVENT_TIME,DX_LOG.EVENT_TITLE,DX_LOG.EVENT_XML_LOCAL_NAME,DX_LOG.EXECUTE_TIME,DX_LOG.ID,DX_LOG.PREVIOUS_ID,DX_LOG.UNPERSONALIZED,DX_LOG.DATA_FILE
+FROM DX_LOG DX_LOG
+
+ WHERE DX_LOG.ADAPTER_ID is null AND DX_LOG.EVENT_TIME <= ?
+ORDER BY DX_LOG.EVENT_TIME ASC
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PLAN (src INDEX (PK_DX_EVENT_TYPE))
+PLAN (DX_LOG ORDER IDX_DX_LOG_EVENT_TIME INDEX (CHD_DX_LOG_DX_ADAPTER))
+
+param0 = timestamp, "2025-02-13T23:59:59.9999"
+
+104 records fetched without sorting
+     25 ms, 1 read(s), 628 fetch(es)
+
+Table                              Natural     Index    Update    Insert    Delete
+**********************************************************************************
+DX_EVENT_TYPE                                    104                                                                                                                                  
+DX_LOG                                           104                                                                                                                                  
+
+2025-02-14T10:52:09.4810 (2105900:0x7f077c7de440#79) EXECUTE_STATEMENT_FINISH
+	ncore-bank (ATT_777784, NT_APP9:NONE, WIN1251, TCPv4:127.0.0.1/54980)
+	NCORE:[WS-DX] - iD-Банк v1.9.26.0 - IDBankUnifoService (IP:10.60.82.134):2099786
+		(TRA_633123130, READ_COMMITTED | READ_CONSISTENCY | WAIT 10 | READ_ONLY)
+
+Statement 878981:
+-------------------------------------------------------------------------------
+select rpl$shortname from rpl$tables where rpl$name in(?,?)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PLAN (RPL$TABLES INDEX (PK_RPLTABLES))
+
+param0 = varchar(31), "SYS_CONFIDENTIAL_RULE"
+param1 = varchar(31), "SYS_FIELDS"
+
+2 records fetched without sorting
+      0 ms, 4 fetch(es)
+
+Table                              Natural     Index    Update    Insert    Delete
+**********************************************************************************
+RPL$TABLES                                         2                                                                                                                                  
+
+2025-02-14T10:52:09.4810 (2103151:0x7f077c10b440#1570) EXECUTE_STATEMENT_FINISH
+	ncore-bank (ATT_777642, SYSDBA:NONE, WIN1251, TCPv4:127.0.0.1/53612)
+	NCORE:DX_Adapter[C] Soap EClient:2099786
+		(TRA_633123374, READ_COMMITTED | READ_CONSISTENCY | WAIT 10 | READ_WRITE)
+
+Statement 369381:
+-------------------------------------------------------------------------------
+insert into DOCUMENT(AMOUNT,BARCODE,CHANGE_DATE,CONTROL_STATUS_ID,CREATE_DATE,DESCRIPTION,DOCSTATUSID,DOCUMENTCLASSID,DOC_DATE,DOC_NUMBER,ID,METAOBJECTNAME,PARENT_ID,SLC_ID,SLG_ID,SLLV_ID,SUSER_ID,SUSER_ID_CHANGE)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ReTuRnInG SLC_ID,DOCUMENTCLASSID,BARCODE,SUSER_FIO,SUSER_ID,AMOUNT,DESCRIPTION,SLLV_ID,ID,TAG_LIST,SLG_ID,METAOBJECT_CAPTION,SUSER_ID_CHANGE,METAOBJECTNAME,DOCUMENTCLASS_CAPTION,DOCSTATUS_CAPTION,CHANGE_DATE,PARENT_ID,CREATE_DATE,DOCSTATUSID,PARENT_INFO,SUSER_FIO_CHANGE,DOC_INFO,DOC_NUMBER,CONTROL_STATUS_ID,DOC_DATE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PLAN (src INDEX (PK_SYSUSER))
+PLAN SORT (JOIN (DD INDEX (PK_DOCUMENT_DOC_TAG), DT INDEX (PK_DOC_TAG)))
+PLAN (src INDEX (PK_SYS_OBJECTS))
+PLAN (src INDEX (PK_DOCUMENTCLASS))
+PLAN (src INDEX (PK_DOCSTATUS))
+PLAN (src INDEX (PK_SYS_OBJECTS))
+PLAN (src INDEX (PK_DOCUMENT))
+PLAN (src INDEX (PK_SYSUSER))
+PLAN (src INDEX (PK_SYS_OBJECTS))
+
+param0 = bigint(*, -2), "<null>"
+param1 = varchar(44), "<null>"
+param2 = timestamp, "2025-02-14T10:52:09.4550"
+param3 = integer, "<null>"
+param4 = timestamp, "2025-02-14T10:52:09.4550"
+param5 = varchar(1000), "<null>"
+param6 = smallint, "1"
+param7 = smallint, "7002"
+param8 = date, "2025-01-13"
+param9 = varchar(40), "<null>"
+param10 = bigint, "6808017711037891978"
+param11 = varchar(63), "UNIFO_CHARGE_INFO"
+param12 = bigint, "6808017711037891977"
+param13 = bigint, "<null>"
+param14 = bigint, "<null>"
+param15 = integer, "<null>"
+param16 = bigint, "8992"
+param17 = bigint, "8992"
+
+0 records fetched without sorting
+     24 ms, 15 read(s), 93 fetch(es), 17 mark(s)
+
+Table                              Natural     Index    Update    Insert    Delete
+**********************************************************************************
+SYS_OBJECTS                                        2                                                                                                                                  
+DOCSTATUS                                          1                                                                                                                                  
+DOCUMENT                                                               1                                                                                                              
+DOCUMENTCLASS                                      1                                                                                                                                  
+SYS_USERS                                          3                                                                                                                                  
+CHANGED_DOCUMENT                                                       1                                                                                                              
+STAT_DOCUMENT_STATUS                                                   1                                                                                                              
