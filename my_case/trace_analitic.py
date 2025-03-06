@@ -10,7 +10,7 @@ def new_line():
 
 lst_trace = []
 first_line_sql = False
-with open(r'ncore-bank.fdb.fbtrace_text', encoding='utf8') as file:
+with open(r'ncore-bank-1.9.33.1.fdb.fbtrace_text', encoding='utf8') as file:
     for line in file:
         match_timestamp = re.match(
             r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{4})\s\((?P<process_id>\d+):(?P<thread_id>\w+)#(?P<thread_number>\d+)\)\s(?P<event>\w+)',
@@ -30,7 +30,7 @@ with open(r'ncore-bank.fdb.fbtrace_text', encoding='utf8') as file:
             attachment = match_att.group('attachment')
             user = match_att.group('user')
             continue
-        match_proc = re.search(r'(?P<process_name>NCORE:[-_a-zA-Zа-яА-Я\d\s\[\]().:]+):\d+$', line)
+        match_proc = re.search(r'(?P<process_name>[-_a-zA-Zа-яА-Я\d\s\[\]().:]+):[-]?\d+$', line)
         if match_proc:
             process_name = match_proc.group('process_name')
             continue
