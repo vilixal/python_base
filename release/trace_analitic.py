@@ -10,10 +10,11 @@ def new_line():
 
 lst_trace = []
 first_line_sql = False
-with open(r'ncore-bank-1.9.33.1.fdb.fbtrace_text', encoding='utf8') as file:
+new_line()
+with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='utf8') as file:
     for line in file:
         match_timestamp = re.match(
-            r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{4})\s\((?P<process_id>\d+):(?P<thread_id>\w+)#(?P<thread_number>\d+)\)\s(?P<event>\w+)',
+            r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{4})\s\((?P<process_id>\d+):(?P<thread_id>\w+)(#(?P<thread_number>\d+))?\)\s(?P<event>[ \w]+)',
             line)
         if match_timestamp:
             new_line()
@@ -30,7 +31,7 @@ with open(r'ncore-bank-1.9.33.1.fdb.fbtrace_text', encoding='utf8') as file:
             attachment = match_att.group('attachment')
             user = match_att.group('user')
             continue
-        match_proc = re.search(r'(?P<process_name>[-_a-zA-Zа-яА-Я\d\s\[\]().:]+):[-]?\d+$', line)
+        match_proc = re.search(r'^\s*(?P<process_name>[-_a-zA-Zа-яА-Я\d\s\[\]().:,\'"]+):[-]?\d+$', line)
         if match_proc:
             process_name = match_proc.group('process_name')
             continue
@@ -38,20 +39,28 @@ with open(r'ncore-bank-1.9.33.1.fdb.fbtrace_text', encoding='utf8') as file:
         if match_transaction:
             transaction = match_transaction.group('transaction')
             continue
-        match_sql = re.search(r'[-]{79}', line)
+        if event=='EXECUTE_PROCEDURE_FINISH': #если событие процедуры, то ищем строку процедуры
+            match_sql = re.search(r'(?P<sql_text>Procedure [_a-zA-Z0-9]+):', line)
+            if match_sql:
+                sql_text= match_sql.group('sql_text')
+        match_sql = re.search(r'[-]{79}', line) #SQL текст заключен между символами ---- и ^^^^. Определяем конец и начало SQL
         match_end_sql = re.search(r'[\^]{79}', line)
         if match_end_sql:
             first_line_sql = False
             continue
+        match_end_sql = re.search(r'\d+ records fetched without sorting', line)
+        if match_end_sql:
+            first_line_sql = False
+            continue
         if first_line_sql:
-            sql_text += ' ' + line
+            sql_text += ' ' + line.strip()
             continue
         if match_sql:
             first_line_sql = True
             sql_text = ''
             match_sql = None
             continue
-        match_execute = re.search(r'(?P<time_execute>\d+)\sms,\s\d+\s', line)
+        match_execute = re.search(r'\s+(?P<time_execute>\d+)\sms[\s,]', line)
         if match_execute:
             time_execute = match_execute.group('time_execute')
             lst_trace.append(

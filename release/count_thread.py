@@ -3,10 +3,10 @@ import pprint
 from datetime import datetime
 
 process_dict = {}
-with open(r'D:\temp\pochta\совком\нг19\logs.backup.2025-02-19_1042', encoding='utf8') as file:
+with open(r'D:\temp\pochta\совком\НГ1003\logs.backup.2025-03-10_1329', encoding='utf8') as file:
     for line in file:
         match = re.search(
-            r'(19.02.25 10:[0-9]{2}:[0-9]{2}.[0-9]{3}),(https-jsse-nio-8443-exec-[0-9]+),INFO,Application,Application version: 1.9.26.0',
+            r'([0-9]{2}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}),(https-jsse-nio-8443-exec-[0-9]+),INFO,Application,Application version: 1.9.26.0',
             line)
         if match:
             date_process = datetime.strptime(match.group(1), '%d.%m.%y %H:%M:%S.%f')
