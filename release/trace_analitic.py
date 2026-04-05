@@ -3,7 +3,7 @@ import re
 
 
 def new_line():
-    global timestamp, process_id, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute
+    global timestamp, process_name, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute
     timestamp, process_id, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute = (
                                                                                                                                           '',) * 12
 
@@ -19,7 +19,7 @@ with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='ut
         if match_timestamp:
             new_line()
             timestamp = match_timestamp.group("timestamp")
-            process_id = match_timestamp.group("process_id")
+            process_name = match_timestamp.group("process_id")
             thread_id = match_timestamp.group("thread_id")
             thread_number = match_timestamp.group("thread_number")
             event = match_timestamp.group("event")
@@ -64,7 +64,7 @@ with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='ut
         if match_execute:
             time_execute = match_execute.group('time_execute')
             lst_trace.append(
-                [timestamp, db, process_id, thread_id, thread_number, attachment, user, process_name, transaction,
+                [timestamp, db, process_name, thread_id, thread_number, attachment, user, process_name, transaction,
                  event, time_execute, sql_text.strip()])
 
 HEADER = ['Время', 'База данных', 'Идентификатор процесса', 'Поток', 'Номер в рамках потока', 'Attachment',
