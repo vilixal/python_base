@@ -27,6 +27,8 @@ def get_method(name,**parameters):
     while True:
         response = requests.get(url,params=formated_parameters)
         data = response.json()
+        if data["time"]:
+            print(f'выполнен запрос: {response.url}\nполучен ответ: {response.status_code} за {data["time"]["duration"]}')
         result_list=[]
         if "result" in data:
             result = data["result"]
@@ -50,10 +52,10 @@ def get_method(name,**parameters):
     return all_data
 
 
-#tasks=get_method('tasks.task.list',filter={'>=CLOSED_DATE':'2026-03-28T13:45:48+03:00','STATUS': '5'},order={'ID':'ASC'})
-users=get_method('user.get' ,filter={'ACTIVE': True},order={'ID':'ASC'})
-#departments = get_method('department.get' ,filter={'ACTIVE': True})
-pprint(users)
+tasks=get_method('tasks.task.list',filter={'>=CLOSED_DATE':'2026-03-28T13:45:48+03:00','STATUS': '5'},order={'ID':'ASC'})
+pprint(tasks)
+# users=get_method('user.get' ,filter={'ACTIVE': True},order={'ID':'ASC'})
+# pprint(users)
 
 #
 #
