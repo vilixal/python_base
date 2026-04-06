@@ -54,7 +54,7 @@ def get_method(name,**parameters):
 
 #tasks=get_method('tasks.task.list',filter={'>=CLOSED_DATE':'2026-03-28T13:45:48+03:00','STATUS': '5'},order={'ID':'ASC'})
 users=get_method('user.get' ,filter={'ACTIVE': True},order={'ID':'ASC'})
-departments = get_method('department.get' ,filter={'ACTIVE': True})
+#departments = get_method('department.get' ,filter={'ACTIVE': True})
 pprint(users)
 
 #
