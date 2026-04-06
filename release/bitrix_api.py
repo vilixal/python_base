@@ -4,8 +4,6 @@ import requests
 import csv
 from datetime import datetime, timedelta
 
-from my_case.bitrixt_test import department_get
-
 # Настройки
 BITRIX24_DOMAIN = "icamgrp.bitrix24.ru"
 WEBHOOK_TOKEN = "ivhpba6cqb56ygx4"
