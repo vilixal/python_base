@@ -27,8 +27,7 @@ def get_method(name,**parameters):
     while True:
         response = requests.get(url,params=formated_parameters)
         data = response.json()
-        if data["time"]:
-            print(f'выполнен запрос: {response.url}\nполучен ответ: {response.status_code} за {data["time"]["duration"]}')
+        print(f'выполнен запрос: {response.url}\nполучен ответ: {response.status_code}')
         result_list=[]
         if "result" in data:
             result = data["result"]
@@ -52,8 +51,14 @@ def get_method(name,**parameters):
     return all_data
 
 
-tasks=get_method('tasks.task.list',filter={'>=CLOSED_DATE':'2026-03-28T13:45:48+03:00','STATUS': '5'},order={'ID':'ASC'})
-pprint(tasks)
+# tasks=get_method('tasks.task.list',filter={'>=CLOSED_DATE':'2026-03-28T13:45:48+03:00','STATUS': '5'},order={'ID':'ASC'})
+# pprint(tasks)
+#lists =  get_method('lists.get',IBLOCK_TYPE_ID='lists_socnet',SOCNET_GROUP_ID=36,start=1)
+lists = get_method('lists.field.get',IBLOCK_TYPE_ID='lists_socnet',IBLOCK_ID=36)
+pprint(lists)
+# group=get_method('sonet_group.get')
+# pprint(group)#36
+
 # users=get_method('user.get' ,filter={'ACTIVE': True},order={'ID':'ASC'})
 # pprint(users)
 
