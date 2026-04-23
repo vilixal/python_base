@@ -93,8 +93,8 @@ master_grid = ui.aggrid({
         }
     ],
     'rowData': master_data,
-    'autoSizeStrategy': # подбор ширины под текст ячеек
-        {'type': 'fitCellContents'},
+    #'autoSizeStrategy': # подбор ширины под текст ячеек
+    #    {'type': 'fitCellContents'},
     'includeHiddenColumnsInQuickFilter': 'toInclude', # быстрый фильтр по скрытым полям
     'cacheQuickFilter': True, #фильтр в кэше
     'enableCellTextSelection': True, #разрешить выделять значения
@@ -106,8 +106,8 @@ detail_grid = ui.aggrid({
     'columnDefs': [
         {'field': 'server', 'headerName': 'Сервер'},
         {'field': 'status', 'headerName': 'Статус'},
-    ], 'autoSizeStrategy':
-        {'type': 'fitCellContents'},
+    ],# 'autoSizeStrategy':
+      #  {'type': 'fitCellContents'},
     'includeHiddenColumnsInQuickFilter': 'toInclude',
     'cacheQuickFilter': True,
     'enableCellTextSelection': True,
