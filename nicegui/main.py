@@ -4,6 +4,7 @@ from nicegui import app, ui
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
              , 'server_name':'Имя сервера'}
+COLUMN_HIDE=['id','tags']
 
 TagRenderer = """
 class TagRenderer {
@@ -61,7 +62,7 @@ class TagRenderer {
 async def main_page():
     columns = await database.get_columns('banklist')
     bank_columns = [
-        {'field': field, 'headerName': COLUMN_NAME.get(field, field)}
+        {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
         for field in columns
     ]
 
