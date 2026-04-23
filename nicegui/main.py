@@ -61,6 +61,8 @@ class TagRenderer {
 @ui.page('/')
 async def main_page():
     columns = await database.get_columns('banklist')
+    columns_not_id = columns.copy()
+    columns_not_id.remove('id')
     bank_columns = [
         {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
         for field in columns
@@ -95,7 +97,8 @@ async def main_page():
         master_grid.update()
     #
     #
-    # async def add_bank():
+    async def add_bank():
+        print(list(inputs[x].value for x in columns_not_id))
     #     name = name_input.value
     #     status = status_select.value
     #     version = version_input.value or '1.9.100.0'
@@ -120,16 +123,14 @@ async def main_page():
 
     with ui.card().classes('q-mb-md w-full'):
         ui.label('➕ Добавить банк').classes('text-h6')
-
+        inputs = {}
         with ui.row().classes('w-full items-center gap-4'):
-            name_input = ui.input('Название банка').props('outlined')
-            status_select = ui.select(
-                ['active', 'inactive'],
-                value='active',
-                label='Статус'
-            ).props('outlined')
-            version_input = ui.input('Версия', placeholder='1.0.0').props('outlined')
-            ui.button('Добавить')#, on_click=add_bank, icon='add').props('color=primary')
+            for column in columns_not_id:
+                if column == 'status':
+                    inputs[column] = ui.select(['Сопровождение', 'Внедрение', 'Отказался'],value='Сопровождение',label=COLUMN_NAME[column]).props('outlined')
+                else:
+                    inputs[column] = ui.input(COLUMN_NAME[column]).props('outlined')
+            ui.button('Добавить', on_click=add_bank, icon='add').props('color=primary')
 
     # Загружаем данные при открытии страницы
     await update_data()
@@ -140,7 +141,7 @@ async def main_page():
 # ============================================
 if __name__ in {"__main__", "__mp_main__"}:
     try:
-        ui.run(reload=False)
+        ui.run(reload=True)
     except KeyboardInterrupt:
         # Игнорируем KeyboardInterrupt
         print("\nПриложение остановлено пользователем")

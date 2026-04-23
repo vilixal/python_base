@@ -14,9 +14,10 @@ async def init_pool():
                 user='postgres',
                 password='masterkey',
                 database='isup',
-                host='localhost'
+                host='localhost',
+                timeout=10
             )
-            print("Подключение к PostgreSQL установлено")
+            print(f"Подключение к PostgreSQL установлено: {DB_POOL._connect_kwargs}")
         else:
             print("Подключение уже существует")
     except Exception as e:
@@ -54,10 +55,11 @@ async def add_data(table_name: str, data: dict, where: dict = None):
         await init_pool()
     columns,values = '',''
     for key, value in data.items():
-        columns=','.join(key)
-        values=','.join(value)
+        if key != 'id':
+            columns=','.join(key)
+            values=','.join(value)
     async with DB_POOL.acquire() as conn:
-        rows=await conn.fetchrow(f'INSERT INTO $1 ($2) VALUES ($3) RETURNING id',table_name,columns,values)
+        rows=await conn.fetchrow(f'INSERT INTO {table_name} ({columns}) VALUES ($1) RETURNING id',values)
         print(f'Вставили в таблицу{table_name} значения {data} под ID = {rows}')
         return dict(rows)
 
@@ -65,5 +67,10 @@ async def add_data(table_name: str, data: dict, where: dict = None):
 @app.on_shutdown
 async def close_db_pool():
     # Закрываем пул при остановке приложения
-    await DB_POOL.close()
-    print("Соединение с БД закрыто")
+    if DB_POOL:
+        await DB_POOL.close()
+        print("Соединение с БД закрыто")
+    else:
+        print("Соединение с БД не может быть закрыто, так как не существует")
+
+
