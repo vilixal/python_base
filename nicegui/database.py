@@ -4,37 +4,63 @@ import asyncpg
 DB_POOL: asyncpg.Pool = None
 
 
-@app.on_startup
+#@app.on_startup #на старт приложения
 async def init_pool():
     global DB_POOL
-    DB_POOL = await asyncpg.create_pool(
-        user='postgres',
-        password='masterkey',
-        database='isup',
-        host='localhost'
-    )
-    print("Подключение к PostgreSQL установлено")
+    try:
+        if DB_POOL is None:
+
+            DB_POOL = await asyncpg.create_pool(
+                user='postgres',
+                password='masterkey',
+                database='isup',
+                host='localhost'
+            )
+            print("Подключение к PostgreSQL установлено")
+        else:
+            print("Подключение уже существует")
+    except Exception as e:
+        ui.label(f'Ошибка: {e}')
+        ui.label('Проверьте подключение к базе данных')
 
 
-async def get_banks():
+async def get_columns(table_name):
+    if DB_POOL is None:
+        await init_pool()
     async with DB_POOL.acquire() as conn:
-        return await conn.fetch("SELECT * FROM banklist ORDER BY bank_name")
+        list_columns = await conn.fetch(f'''SELECT column_name -- имя поля
+                                       FROM information_schema.columns
+                                       WHERE table_name = $1 -- Укажите имя вашей таблицы
+                                         AND table_schema = 'public' -- Обычно 'public', если не используете другие схемы
+                                       ORDER BY ordinal_position;''',table_name)
+        columns = []
+        for row in list_columns:
+            columns.append(row[0])
+        print(f'Получили список полей для таблицы {table_name}: {columns}')
+        return columns
 
 
-# async def add_bank(name: str, status: str = 'active'):
-#     async with DB_POOL.acquire() as conn:
-#         return await conn.fetchrow(
-#             "INSERT INTO banklist (bank_name, status) VALUES ($1, $2) RETURNING id",
-#             name, status
-#         )
-
-
-async def get_servers_for_bank(bank_id: int):
+async def get_data(table_name: str, where: dict = None,order: dict = None):
+    if DB_POOL is None:
+        await init_pool()
     async with DB_POOL.acquire() as conn:
-        return await conn.fetch(
-            "SELECT * FROM server WHERE banklist_id = $1",
-            bank_id
-        )
+        rows = await conn.fetch(f'SELECT * FROM {table_name} ORDER BY id')
+        print(f'Получили данные таблицы {table_name}: {rows}')
+        return [dict(row) for row in rows]
+
+
+async def add_data(table_name: str, data: dict, where: dict = None):
+    if DB_POOL is None:
+        await init_pool()
+    columns,values = '',''
+    for key, value in data.items():
+        columns=','.join(key)
+        values=','.join(value)
+    async with DB_POOL.acquire() as conn:
+        rows=await conn.fetchrow(f'INSERT INTO $1 ($2) VALUES ($3) RETURNING id',table_name,columns,values)
+        print(f'Вставили в таблицу{table_name} значения {data} под ID = {rows}')
+        return dict(rows)
+
 
 @app.on_shutdown
 async def close_db_pool():

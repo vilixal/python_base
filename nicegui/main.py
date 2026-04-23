@@ -1,6 +1,9 @@
 import database
+import sys
 from nicegui import app, ui
 
+COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
+             , 'server_name':'Имя сервера'}
 
 TagRenderer = """
 class TagRenderer {
@@ -56,11 +59,10 @@ class TagRenderer {
 
 @ui.page('/')
 async def main_page():
+    columns = await database.get_columns('banklist')
     bank_columns = [
-        {'field': 'id', 'headerName': 'ID'},
-        {'field': 'bank_name', 'headerName': 'Название банка'},
-        {'field': 'status', 'headerName': 'Статус'},
-        {'field': 'app_version', 'headerName': 'Версия'},
+        {'field': field, 'headerName': COLUMN_NAME.get(field, field)}
+        for field in columns
     ]
 
     search_input = ui.input(placeholder='Поиск').props('rounded outlined dense').props('clearable')
@@ -86,40 +88,34 @@ async def main_page():
         'headerHeight': 20
     }).classes('w-full h-[300px]')
 
-    async def load_data():
-        async with database.DB_POOL.acquire() as conn:
-            rows = await conn.fetch("""
-                SELECT id, bank_name, status, app_version 
-                FROM banklist 
-                ORDER BY id
-            """)
-            # Преобразуем asyncpg.Record в список словарей
-            master_grid.options['rowData'] = [dict(row) for row in rows]
-            master_grid.update()
-
-
-    async def add_bank():
-        name = name_input.value
-        status = status_select.value
-        version = version_input.value or '1.9.100.0'
-
-        if not name:
-            ui.notify('Введите название банка', type='warning')
-            return
-
-        async with database.DB_POOL.acquire() as conn:
-            await conn.execute("""
-                               INSERT INTO banklist (bank_name, status, app_version)
-                               VALUES ($1, $2, $3)
-                               """, name, status, version)
-
-        # Очищаем поля
-        name_input.value = ''
-        version_input.value = ''
-        ui.notify(f'Банк "{name}" добавлен', type='positive')
-
-        # Обновляем таблицу
-        await load_data()
+    async def update_data():
+        rows = await database.get_data('banklist')
+        master_grid.options['rowData'] = [dict(row) for row in rows]
+        master_grid.update()
+    #
+    #
+    # async def add_bank():
+    #     name = name_input.value
+    #     status = status_select.value
+    #     version = version_input.value or '1.9.100.0'
+    #
+    #     if not name:
+    #         ui.notify('Введите название банка', type='warning')
+    #         return
+    #
+    #     async with database.DB_POOL.acquire() as conn:
+    #         await conn.execute("""
+    #                            INSERT INTO banklist (bank_name, status, app_version)
+    #                            VALUES ($1, $2, $3)
+    #                            """, name, status, version)
+    #
+    #     # Очищаем поля
+    #     name_input.value = ''
+    #     version_input.value = ''
+    #     ui.notify(f'Банк "{name}" добавлен', type='positive')
+    #
+    #     # Обновляем таблицу
+    #     await load_data()
 
     with ui.card().classes('q-mb-md w-full'):
         ui.label('➕ Добавить банк').classes('text-h6')
@@ -132,19 +128,23 @@ async def main_page():
                 label='Статус'
             ).props('outlined')
             version_input = ui.input('Версия', placeholder='1.0.0').props('outlined')
-            ui.button('Добавить', on_click=add_bank, icon='add').props('color=primary')
+            ui.button('Добавить')#, on_click=add_bank, icon='add').props('color=primary')
 
     # Загружаем данные при открытии страницы
-    await load_data()
+    await update_data()
 
 
 # ============================================
 # ЗАПУСК ПРИЛОЖЕНИЯ
 # ============================================
-if __name__ == '__main__':
-    ui.run(
-        title='Банки - AG Grid Demo',
-        dark=False,
-        reload=False  # При разработке можно поставить True
-    )
-
+if __name__ in {"__main__", "__mp_main__"}:
+    try:
+        ui.run(reload=False)
+    except KeyboardInterrupt:
+        # Игнорируем KeyboardInterrupt
+        print("\nПриложение остановлено пользователем")
+        sys.exit(0)
+    except Exception as e:
+        # Другие ошибки логируем
+        print(f"Ошибка: {e}")
+        sys.exit(1)
