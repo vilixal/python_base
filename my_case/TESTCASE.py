@@ -1,7 +1,7 @@
 from nicegui import ui
+import json
 
-with ui.row().classes('w-full'):
-    ui.button('Кнопка 1')
-    ui.label('Какой-то текст')
-    ui.button('Кнопка 2').classes('ml-auto')  # уедет вправо
-ui.run()
+bank_name='UG<'
+where={'banklist_id':2}
+row=dict(where).append('bank_name':bank_name)
+print(row)

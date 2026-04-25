@@ -41,11 +41,15 @@ async def get_columns(table_name):
         return columns
 
 
-async def get_data(table_name: str, where: dict = None,order: dict = None):
+async def get_data(table_name: str, where_dict: dict = None,order: dict = None):
     if DB_POOL is None:
         await init_pool()
+    where = None
+    if where_dict:
+        for key, value in where_dict.items():
+            where=f'where {key} = {value}'
     async with DB_POOL.acquire() as conn:
-        rows = await conn.fetch(f'SELECT * FROM {table_name} ORDER BY id')
+        rows = await conn.fetch(f'SELECT * FROM {table_name} {where} ORDER BY id')
         print(f'Получили данные таблицы {table_name}: {rows}')
         return [dict(row) for row in rows]
 

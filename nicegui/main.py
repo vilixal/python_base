@@ -4,7 +4,7 @@ from nicegui import app, ui
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
              , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий'}
-COLUMN_HIDE=[]#'id','tags','server_id'
+COLUMN_HIDE=['id','tags','server_id','banklist_id']#
 
 TagRenderer = """
 class TagRenderer {
@@ -71,10 +71,11 @@ async def main_page():
     module_columns = await database.get_columns('module')
     module_columns_not_id = module_columns.copy()
     module_columns_not_id.remove('id')
-    module_field_agg = [
+    module_field_agg = [{'field': 'bank_name', 'headerName': COLUMN_NAME.get('bank_name', 'bank_name')}]
+    module_field_agg.extend([
         {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
         for field in module_columns
-    ]
+    ])
 
     def apply_quick_filter():
         filter_text = search_input.value
@@ -90,6 +91,18 @@ async def main_page():
 
     async def add_bank():
         print(list(inputs[x].value for x in banklist_columns_not_id))
+
+    async def show_modules(data):
+        print(f"Выбрали запись {data}")
+        if data.args and 'data' in data.args:
+            bank_id = data.args['data']['id']
+            bank_name = data.args['data']['bank_name']
+            rows = await database.get_data('module',{'banklist_id':bank_id})
+            module_grid.options['rowData']=[dict(row)|{'bank_name': bank_name} for row in rows]
+            print(module_grid.options['rowData'])
+            module_grid.update()
+            print(f"Показаны серверы для {bank_name}")
+
 
 
     # определение контейнеров и высоты страницы
@@ -124,7 +137,7 @@ async def main_page():
             'enableCellTextSelection': True,  # разрешить выделять значения
             'rowHeight': 20,  # Высота строк данных
             'headerHeight': 20
-        }).classes('w-full flex-1/2')
+        }).classes('w-full flex-1/2').on('rowClicked', show_modules, ['data'])
 
         module_grid = ui.aggrid({
             'columnDefs': module_field_agg,
