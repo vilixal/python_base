@@ -1,0 +1,33 @@
+Основные группы Tailwind-классов и примеры
+Ниже представлены ключевые категории свойств, которые можно настраивать с помощью .classes().
+
+Группа свойств	Что делает	Примеры классов
+Размеры (Width & Height)	Задает ширину и высоту элемента.	w-full (100% ширины), w-1/2 (50%), h-64 (фиксированная высота 16rem/256px), h-screen (100% высоты экрана).
+Размеры с произвольными значениями	Позволяет задать любые значения в пикселях, rem или процентах.	h-[400px], w-[calc(100%-2rem)], max-h-[500px], min-w-[150px].
+Flexbox и Grid (Layout)	Управляет поведением элемента во flex- или grid-контейнере.	flex, flex-1, flex-grow, flex-shrink-0, flex-col, justify-center, items-center, gap-4.
+Отступы (Spacing)	Добавляет внешние (margin) и внутренние (padding) отступы.	p-4 (padding: 1rem), px-2 (padding-left/right: 0.5rem), mt-6 (margin-top: 1.5rem), m-0 (margin: 0).
+Цвета (Colors)	Определяет цвет текста, фона, границ и т.д.	text-white, bg-blue-500, border-gray-200, from-red-500 to-blue-500 (для градиентов).
+Текст (Typography)	Управляет шрифтами, размером и начертанием текста.	text-lg, font-bold, text-center, uppercase, leading-relaxed.
+Границы и тени (Borders & Shadows)	Рисует границы, скругляет углы, добавляет тени.	rounded-lg, border, border-2, shadow-md, shadow-xl.
+Позиционирование (Position)	Определяет тип позиционирования и координаты.	relative, absolute, fixed, inset-0 (top:0; right:0; bottom:0; left:0), top-4.
+Эффекты (Effects)	Применяет различные визуальные эффекты.	opacity-50, cursor-pointer, overflow-hidden, overflow-auto.
+
+.classes() работает с классами Tailwind
+
+.style() применяет непосредственно CSS-правила и нужен в исключительных случаях, когда классов Tailwind недостаточно.
+[Пример] .style('background-color: #c0c0c0; font-size: 20px')
+
+.props() используется для управления специфическими свойствами компонентов Quasar Framework (которые в основном отвечают за поведение, а не за внешний вид).
+[Пример] .props('outline round') для кнопки или .props('clearable') для поля ввода.
+
+w-full h-[calc(100vh-32px)]' - размер блока на весь экран, внутри фикс + флексы
+
+https://chat.deepseek.com/share/sityjxj5bv4ue6vvo8
+
+Группа: Отступы (Spacing) - особый случай
+Класс	Что делает	CSS эквивалент	Пояснение
+m-auto	Автоматический отступ со всех сторон	margin: auto	Центрирует элемент в контейнере
+mx-auto	Авто-отступы слева и справа	margin-left: auto; margin-right: auto	Горизонтальное центрирование
+my-auto	Авто-отступы сверху и снизу	margin-top: auto; margin-bottom: auto	Вертикальное центрирование
+ml-auto	Авто-отступ слева	margin-left: auto	Прижимает элемент вправо
+mr-auto	Авто-отступ справа	margin-right: auto	Прижимает элемент влево

@@ -1,5 +1,7 @@
-lst=['id', 'bank_name', 'tags', 'status', 'modules', 'contacts', 'app_version', 'db_version']
-lst_not_id=lst.copy()
-lst_not_id.remove('id')
-print(lst)
-print(lst_not_id)
+from nicegui import ui
+
+with ui.row().classes('w-full'):
+    ui.button('Кнопка 1')
+    ui.label('Какой-то текст')
+    ui.button('Кнопка 2').classes('ml-auto')  # уедет вправо
+ui.run()

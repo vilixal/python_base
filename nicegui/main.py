@@ -3,8 +3,8 @@ import sys
 from nicegui import app, ui
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
-             , 'server_name':'Имя сервера'}
-COLUMN_HIDE=['id','tags']
+             , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий'}
+COLUMN_HIDE=[]#'id','tags','server_id'
 
 TagRenderer = """
 class TagRenderer {
@@ -60,15 +60,21 @@ class TagRenderer {
 
 @ui.page('/')
 async def main_page():
-    columns = await database.get_columns('banklist')
-    columns_not_id = columns.copy()
-    columns_not_id.remove('id')
-    bank_columns = [
+    banklist_columns = await database.get_columns('banklist')
+    banklist_columns_not_id = banklist_columns.copy()
+    banklist_columns_not_id.remove('id')
+    bank_field_agg = [
         {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
-        for field in columns
+        for field in banklist_columns
     ]
 
-    search_input = ui.input(placeholder='Поиск').props('rounded outlined dense').props('clearable')
+    module_columns = await database.get_columns('module')
+    module_columns_not_id = module_columns.copy()
+    module_columns_not_id.remove('id')
+    module_field_agg = [
+        {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
+        for field in module_columns
+    ]
 
     def apply_quick_filter():
         filter_text = search_input.value
@@ -77,60 +83,98 @@ async def main_page():
         # Всё что api.method в aggrid вызывается так
         master_grid.run_grid_method('setGridOption', 'quickFilterText', filter_text)
 
-    search_input.on_value_change(apply_quick_filter)
-
-    master_grid = ui.aggrid({
-        'columnDefs': bank_columns,
-        'rowData': [],
-        # 'autoSizeStrategy': # подбор ширины под текст ячеек
-        #    {'type': 'fitCellContents'},
-        'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
-        'cacheQuickFilter': True,  # фильтр в кэше
-        'enableCellTextSelection': True,  # разрешить выделять значения
-        'rowHeight': 25,  # Высота строк данных
-        'headerHeight': 20
-    }).classes('w-full h-[300px]')
-
     async def update_data():
         rows = await database.get_data('banklist')
         master_grid.options['rowData'] = [dict(row) for row in rows]
         master_grid.update()
-    #
-    #
-    async def add_bank():
-        print(list(inputs[x].value for x in columns_not_id))
-    #     name = name_input.value
-    #     status = status_select.value
-    #     version = version_input.value or '1.9.100.0'
-    #
-    #     if not name:
-    #         ui.notify('Введите название банка', type='warning')
-    #         return
-    #
-    #     async with database.DB_POOL.acquire() as conn:
-    #         await conn.execute("""
-    #                            INSERT INTO banklist (bank_name, status, app_version)
-    #                            VALUES ($1, $2, $3)
-    #                            """, name, status, version)
-    #
-    #     # Очищаем поля
-    #     name_input.value = ''
-    #     version_input.value = ''
-    #     ui.notify(f'Банк "{name}" добавлен', type='positive')
-    #
-    #     # Обновляем таблицу
-    #     await load_data()
 
-    with ui.card().classes('q-mb-md w-full'):
-        ui.label('➕ Добавить банк').classes('text-h6')
-        inputs = {}
-        with ui.row().classes('w-full items-center gap-4'):
-            for column in columns_not_id:
-                if column == 'status':
-                    inputs[column] = ui.select(['Сопровождение', 'Внедрение', 'Отказался'],value='Сопровождение',label=COLUMN_NAME[column]).props('outlined')
-                else:
-                    inputs[column] = ui.input(COLUMN_NAME[column]).props('outlined')
-            ui.button('Добавить', on_click=add_bank, icon='add').props('color=primary')
+    async def add_bank():
+        print(list(inputs[x].value for x in banklist_columns_not_id))
+
+
+    # определение контейнеров и высоты страницы
+    # ui.context.client.page_container.default_slot.children[0].props(
+    #     ':style-fn="(offset, height) => ({ height: `calc(100vh - ${offset}px)` })"'
+    # )
+    # ui.context.client.content.classes("h-full")
+
+
+    with ui.column().classes('w-full h-[calc(100vh-32px)]'):
+        with ui.row().classes('w-full'):
+            search_input = ui.input(placeholder='Поиск').props('rounded outlined dense').props('clearable').classes('w-[400px]')
+            with ui.button(icon='menu').classes('ml-auto'):
+                with ui.menu() as menu:
+                    ui.menu_item('Пункт меню 1', lambda: result.set_text('Выбран элемент 1'))
+                    ui.menu_item('Пункт меню 2', lambda: result.set_text('Выбран элемент 2'))
+                    ui.menu_item('Пункт меню 3 (держать открытым)',
+                                 lambda: result.set_text('Выбран элемент 3'), auto_close=False)
+                    ui.separator()
+                    ui.menu_item('Закрыть', menu.close)
+
+
+        search_input.on_value_change(apply_quick_filter)
+
+        master_grid = ui.aggrid({
+            'columnDefs': bank_field_agg,
+            'rowData': [],
+            # 'autoSizeStrategy': # подбор ширины под текст ячеек
+            #    {'type': 'fitCellContents'},
+            'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
+            'cacheQuickFilter': True,  # фильтр в кэше
+            'enableCellTextSelection': True,  # разрешить выделять значения
+            'rowHeight': 20,  # Высота строк данных
+            'headerHeight': 20
+        }).classes('w-full flex-1/2')
+
+        module_grid = ui.aggrid({
+            'columnDefs': module_field_agg,
+            'rowData': [],
+            # 'autoSizeStrategy': # подбор ширины под текст ячеек
+            #    {'type': 'fitCellContents'},
+            'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
+            'cacheQuickFilter': True,  # фильтр в кэше
+            'enableCellTextSelection': True,  # разрешить выделять значения
+            'rowHeight': 20,  # Высота строк данных
+            'headerHeight': 20
+        }).classes('w-full flex-1')
+
+
+        #
+        #
+
+        #     name = name_input.value
+        #     status = status_select.value
+        #     version = version_input.value or '1.9.100.0'
+        #
+        #     if not name:
+        #         ui.notify('Введите название банка', type='warning')
+        #         return
+        #
+        #     async with database.DB_POOL.acquire() as conn:
+        #         await conn.execute("""
+        #                            INSERT INTO banklist (bank_name, status, app_version)
+        #                            VALUES ($1, $2, $3)
+        #                            """, name, status, version)
+        #
+        #     # Очищаем поля
+        #     name_input.value = ''
+        #     version_input.value = ''
+        #     ui.notify(f'Банк "{name}" добавлен', type='positive')
+        #
+        #     # Обновляем таблицу
+        #     await load_data()
+        data = {'show_card': False}
+        ui.switch('Показать карточку', value=False).bind_value_to(data, 'show_card')
+        with ui.card().classes('w-full').bind_visibility_from(data, 'show_card'):
+            ui.label('➕ Добавить банк').classes('text-h6')
+            inputs = {}
+            with ui.row().classes('w-full items-center gap-4'):
+                for column in banklist_columns_not_id:
+                    if column == 'status':
+                        inputs[column] = ui.select(['Сопровождение', 'Внедрение', 'Отказался'],value='Сопровождение',label=COLUMN_NAME[column]).props('outlined')
+                    else:
+                        inputs[column] = ui.input(COLUMN_NAME[column]).props('outlined')
+                ui.button('Добавить', on_click=add_bank, icon='add').props('color=primary')
 
     # Загружаем данные при открытии страницы
     await update_data()
