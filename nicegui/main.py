@@ -1,6 +1,6 @@
 import database
 import sys
-from nicegui import app, ui
+from nicegui import events, app, ui
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
              , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий'}
@@ -77,6 +77,15 @@ async def main_page():
         for field in module_columns
     ])
 
+    server_columns = await database.get_columns('server')
+    server_columns_not_id = server_columns.copy()
+    server_columns_not_id.remove('id')
+    server_field_agg = [
+        {'field': field, 'headerName': COLUMN_NAME.get(field, field),'hide': True if field in COLUMN_HIDE else False}
+        for field in server_columns
+    ]
+
+
     def apply_quick_filter():
         filter_text = search_input.value
         print(f"Фильтр: '{filter_text}'")  # Для отладки
@@ -88,24 +97,33 @@ async def main_page():
         rows = await database.get_data('banklist')
         master_grid.options['rowData'] = [dict(row) for row in rows]
         master_grid.update()
+        server_grid.update()
+        module_grid.update()
 
     async def add_bank():
         print(list(inputs[x].value for x in banklist_columns_not_id))
 
-    async def show_modules(data):
+    async def show_details(data):
         print(f"Выбрали запись {data}")
         if data.args and 'data' in data.args:
             bank_id = data.args['data']['id']
             bank_name = data.args['data']['bank_name']
-            rows = await database.get_data('module',{'banklist_id':bank_id})
-            module_grid.options['rowData']=[dict(row)|{'bank_name': bank_name} for row in rows]
+            #server
+            server_rows = await database.get_data('server',{'banklist_id':bank_id})
+            server_grid.options['rowData']=[dict(row)|{'bank_name': bank_name} for row in server_rows]
+            print(server_grid.options['rowData'])
+            server_grid.update()
+            print(f"Показаны серверы для {bank_name}")
+            #module
+            module_rows = await database.get_data('module',{'banklist_id':bank_id})
+            module_grid.options['rowData']=[dict(row)|{'bank_name': bank_name} for row in module_rows]
             print(module_grid.options['rowData'])
             module_grid.update()
-            print(f"Показаны серверы для {bank_name}")
+            print(f"Показаны модули для {bank_name}")
 
 
 
-    # определение контейнеров и высоты страницы
+    # определение контейнеров и высоты страницы nextval('banklist_id_seq'::regclass) nextval('module_id_seq'::regclass)
     # ui.context.client.page_container.default_slot.children[0].props(
     #     ':style-fn="(offset, height) => ({ height: `calc(100vh - ${offset}px)` })"'
     # )
@@ -137,19 +155,33 @@ async def main_page():
             'enableCellTextSelection': True,  # разрешить выделять значения
             'rowHeight': 20,  # Высота строк данных
             'headerHeight': 20
-        }).classes('w-full flex-1/2').on('rowClicked', show_modules, ['data'])
+        }).classes('w-full flex-1/2').on('rowClicked', show_details, ['data'])
 
-        module_grid = ui.aggrid({
-            'columnDefs': module_field_agg,
-            'rowData': [],
-            # 'autoSizeStrategy': # подбор ширины под текст ячеек
-            #    {'type': 'fitCellContents'},
-            'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
-            'cacheQuickFilter': True,  # фильтр в кэше
-            'enableCellTextSelection': True,  # разрешить выделять значения
-            'rowHeight': 20,  # Высота строк данных
-            'headerHeight': 20
-        }).classes('w-full flex-1')
+        with ui.row().classes('w-full flex-1'):
+            server_grid = ui.aggrid({
+                'columnDefs': server_field_agg,
+                'rowData': [],
+                # 'autoSizeStrategy': # подбор ширины под текст ячеек
+                #    {'type': 'fitCellContents'},
+                'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
+                'cacheQuickFilter': True,  # фильтр в кэше
+                'enableCellTextSelection': True,  # разрешить выделять значения
+                'rowHeight': 20,  # Высота строк данных
+                'headerHeight': 20
+            }).classes('w-full flex-1')
+
+
+            module_grid = ui.aggrid({
+                'columnDefs': module_field_agg,
+                'rowData': [],
+                # 'autoSizeStrategy': # подбор ширины под текст ячеек
+                #    {'type': 'fitCellContents'},
+                'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
+                'cacheQuickFilter': True,  # фильтр в кэше
+                'enableCellTextSelection': True,  # разрешить выделять значения
+                'rowHeight': 20,  # Высота строк данных
+                'headerHeight': 20
+            }).classes('w-full flex-1')
 
 
         #
