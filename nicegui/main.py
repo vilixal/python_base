@@ -64,7 +64,7 @@ class TagRenderer {
 
 @ui.page('/')
 async def main_page():
-    #ui.add_head_html('<style>.q-scrollarea__content{padding:0 !important}</style>')
+    ui.add_head_html('<style>.q-scrollarea__content{padding:0 !important}</style>')
     banklist_columns = await database.get_columns('banklist')
     banklist_columns_not_id = banklist_columns.copy()
     banklist_columns_not_id.remove('id')
@@ -197,7 +197,7 @@ async def main_page():
                 'headerHeight': 20
             }).classes('w-full flex-4 h-full').on('rowClicked', show_details, ['data'])
 
-            with ui.card().classes('w-full flex-1 h-full p-0'):
+            with ui.card().classes('w-full flex-1 h-full p-2 pl-5'):
                 with ui.scroll_area().classes('w-full h-full'):
                     module_list_lable = ui.markdown('**Список модулей:**')
 
