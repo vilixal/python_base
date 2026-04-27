@@ -8,6 +8,8 @@ COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'ta
              , 'server_name':'Имя сервера', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий','module_name':'Модуль'}
 COLUMN_HIDE=['id','tags','server_id','banklist_id']#
 
+ALL_MODULES = 'Список модулей'
+
 TagRenderer = """
 class TagRenderer {
     init(params) {
@@ -62,6 +64,7 @@ class TagRenderer {
 
 @ui.page('/')
 async def main_page():
+    #ui.add_head_html('<style>.q-scrollarea__content{padding:0 !important}</style>')
     banklist_columns = await database.get_columns('banklist')
     banklist_columns_not_id = banklist_columns.copy()
     banklist_columns_not_id.remove('id')
@@ -133,6 +136,9 @@ async def main_page():
 
     async def show_details(data):
         print(f"Выбрали запись {data}")
+        global ALL_MODULES
+        ALL_MODULES =''
+        list_modules_for_label=[]
         if data.args and 'data' in data.args:
             bank_id = data.args['data']['id']
             bank_name = data.args['data']['bank_name']
@@ -148,6 +154,10 @@ async def main_page():
             print(module_grid.options['rowData'])
             module_grid.update()
             print(f"Показаны модули для {bank_name}")
+            for row in module_grid.options['rowData']:
+                list_modules_for_label.append(row['module_name'])
+            ALL_MODULES = f'**Список модулей банка {bank_name}:**\n\n' + '\n'.join(f'- {module}' for module in list_modules_for_label)
+            module_list_lable.set_content(ALL_MODULES)
 
 
 
@@ -174,17 +184,24 @@ async def main_page():
 
         search_input.on_value_change(apply_quick_filter)
 
-        master_grid = ui.aggrid({
-            'columnDefs': bank_field_agg,
-            'rowData': [],
-            # 'autoSizeStrategy': # подбор ширины под текст ячеек
-            #    {'type': 'fitCellContents'},
-            'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
-            'cacheQuickFilter': True,  # фильтр в кэше
-            'enableCellTextSelection': True,  # разрешить выделять значения
-            'rowHeight': 20,  # Высота строк данных
-            'headerHeight': 20
-        }).classes('w-full flex-1/2').on('rowClicked', show_details, ['data'])
+        with ui.row().classes('w-full flex-1'):
+            master_grid = ui.aggrid({
+                'columnDefs': bank_field_agg,
+                'rowData': [],
+                # 'autoSizeStrategy': # подбор ширины под текст ячеек
+                #    {'type': 'fitCellContents'},
+                'includeHiddenColumnsInQuickFilter': 'toInclude',  # быстрый фильтр по скрытым полям
+                'cacheQuickFilter': True,  # фильтр в кэше
+                'enableCellTextSelection': True,  # разрешить выделять значения
+                'rowHeight': 20,  # Высота строк данных
+                'headerHeight': 20
+            }).classes('w-full flex-4 h-full').on('rowClicked', show_details, ['data'])
+
+            with ui.card().classes('w-full flex-1 h-full p-0'):
+                with ui.scroll_area().classes('w-full h-full'):
+                    module_list_lable = ui.markdown('**Список модулей:**')
+
+
 
         with ui.row().classes('w-full flex-1'):
             server_grid = ui.aggrid({
@@ -197,7 +214,7 @@ async def main_page():
                 'enableCellTextSelection': True,  # разрешить выделять значения
                 'rowHeight': 20,  # Высота строк данных
                 'headerHeight': 20
-            }).classes('w-full flex-1')
+            }).classes('w-full flex-1 h-full')
 
 
             module_grid = ui.aggrid({
@@ -210,11 +227,11 @@ async def main_page():
                 'enableCellTextSelection': True,  # разрешить выделять значения
                 'rowHeight': 20,  # Высота строк данных
                 'headerHeight': 20
-            }).classes('w-full flex-1')
+            }).classes('w-full flex-1 h-full')
 
 
-        data = {'show_card': True}
-        ui.switch('Показать карточку', value=True).bind_value_to(data, 'show_card')
+        data = {'show_card': False}
+        ui.switch('Показать карточку', value=False).bind_value_to(data, 'show_card')
         with ui.card().classes('w-full').bind_visibility_from(data, 'show_card'):
             ui.label('➕ Добавить банк').classes('text-h6')
             inputs = {}
