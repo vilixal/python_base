@@ -1,11 +1,12 @@
 import database
 import sys
 from nicegui import events, app, ui
+import bank_import
 import asyncio
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
-             , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий','module_name':'Имя модуля'}
-COLUMN_HIDE=[]#'id','tags','server_id','banklist_id']#
+             , 'server_name':'Имя сервера', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий','module_name':'Модуль'}
+COLUMN_HIDE=['id','tags','server_id','banklist_id']#
 
 TagRenderer = """
 class TagRenderer {
@@ -106,15 +107,27 @@ async def main_page():
         if not inputs['bank_name']:
             ui.notify('Введите название банка', type='warning')
             return
-        banklist_insert_list={}
+        insert_list={}
         for column in columns_not_id:
-            banklist_insert_list.update({column: inputs[column].value})
-        await database.add_data(table, banklist_insert_list)
-        ui.notify(f'Запись в таблицу "{table}" добавлена', type='positive')
+            insert_list.update({column: inputs[column].value})
+        insert_id=await database.add_data(table, insert_list)
+        ui.notify(f'Запись в таблицу "{table}" добавлена, ID = {insert_id}', type='positive')
         # Очищаем поля
         for column in columns_not_id:
             inputs[column].value=''
         # Обновляем таблицу
+        await update_data()
+
+
+    async def delete_rows():
+        await database.delete_data('banklist')
+        ui.notify(f'УДАЛЕНЫ ВСЕ ДАННЫЕ', type='negative')
+        await update_data()
+
+
+    async def load_data_file():
+        count_rows=await bank_import.load_data_file()
+        ui.notify(f'Загружено {count_rows} записей в список банков', type='positive')
         await update_data()
 
 
@@ -212,6 +225,9 @@ async def main_page():
                     else:
                         inputs[column] = ui.input(COLUMN_NAME[column]).props('outlined')
                 ui.button('Добавить', on_click=lambda: add_rows('banklist',banklist_columns_not_id), icon='add').props('color=primary')
+                ui.button('УДАЛИТЬ', on_click=delete_rows, icon='delete').props('color=primary')
+                ui.button('Загрузить', on_click=load_data_file, icon='download').props('color=primary')
+
 
     # Загружаем данные при открытии страницы
     await update_data()

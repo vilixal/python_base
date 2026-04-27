@@ -61,16 +61,27 @@ async def add_data(table_name: str, data: dict):
     for key, value in data.items():
         if key != 'id':
             columns_list.append(key)
-            if '_id' in key:
+            if '_id' in key and type(value) == str:
                 values_list.append(int(value))
+            elif value == '':
+                values_list.append(None)
             else:
+                print(type(value))
                 values_list.append(value)
     columns=','.join(columns_list)
     placeholders = ','.join([f'${i + 1}' for i in range(len(values_list))])
     print(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})',values_list)
     async with DB_POOL.acquire() as conn:
-        await conn.execute(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})',*values_list)
+        row = await conn.fetch(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders}) RETURNING id',*values_list)
         print(f'Вставили в таблицу {table_name} значения {data}')
+        return row[0]['id']
+
+
+async def delete_data(table_name: str):
+    if DB_POOL is None:
+        await init_pool()
+    async with DB_POOL.acquire() as conn:
+        await conn.execute(f'delete from {table_name}')
 
 
 @app.on_shutdown
