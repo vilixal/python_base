@@ -1,10 +1,11 @@
 import database
 import sys
 from nicegui import events, app, ui
+import asyncio
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
              , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий'}
-COLUMN_HIDE=['id','tags','server_id','banklist_id']#
+COLUMN_HIDE=[]#'id','tags','server_id','banklist_id']#
 
 TagRenderer = """
 class TagRenderer {
@@ -102,6 +103,20 @@ async def main_page():
 
     async def add_bank():
         print(list(inputs[x].value for x in banklist_columns_not_id))
+        if not inputs['bank_name']:
+            ui.notify('Введите название банка', type='warning')
+            return
+        banklist_insert_list={}
+        for column in banklist_columns_not_id:
+            banklist_insert_list.update({column: inputs[column].value})
+        await database.add_data('banklist', banklist_insert_list)
+        ui.notify(f'Банк "{inputs['bank_name'].value}" добавлен', type='positive')
+        # Очищаем поля
+        for column in banklist_columns_not_id:
+            inputs[column].value=''
+        # Обновляем таблицу
+        await update_data()
+
 
     async def show_details(data):
         print(f"Выбрали запись {data}")
@@ -120,6 +135,7 @@ async def main_page():
             print(module_grid.options['rowData'])
             module_grid.update()
             print(f"Показаны модули для {bank_name}")
+
 
 
 
@@ -184,30 +200,6 @@ async def main_page():
             }).classes('w-full flex-1')
 
 
-        #
-        #
-
-        #     name = name_input.value
-        #     status = status_select.value
-        #     version = version_input.value or '1.9.100.0'
-        #
-        #     if not name:
-        #         ui.notify('Введите название банка', type='warning')
-        #         return
-        #
-        #     async with database.DB_POOL.acquire() as conn:
-        #         await conn.execute("""
-        #                            INSERT INTO banklist (bank_name, status, app_version)
-        #                            VALUES ($1, $2, $3)
-        #                            """, name, status, version)
-        #
-        #     # Очищаем поля
-        #     name_input.value = ''
-        #     version_input.value = ''
-        #     ui.notify(f'Банк "{name}" добавлен', type='positive')
-        #
-        #     # Обновляем таблицу
-        #     await load_data()
         data = {'show_card': False}
         ui.switch('Показать карточку', value=False).bind_value_to(data, 'show_card')
         with ui.card().classes('w-full').bind_visibility_from(data, 'show_card'):

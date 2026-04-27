@@ -1,11 +1,4 @@
-from nicegui import events, ui
+data={'bank_name': 'Акбарс', 'tags': 'ыва', 'status': 'Сопровождение', 'modules': 'ыфва', 'contacts': 'ыфва', 'app_version': 'ыфва', 'db_version': ''}
 
-grid = ui.aggrid({})
 
-def handle_theme_change(e: events.ValueChangeEventArguments):
-    grid.classes(add='ag-theme-balham-dark' if e.value else 'ag-theme-balham',
-                 remove='ag-theme-balham ag-theme-balham-dark')
-
-ui.switch('Dark', on_change=handle_theme_change)
-
-ui.run()
+print(*['Акбарс', 'ф', 'Сопровождение', 'asd', 'фыв', 'фыв', 'ппп'])

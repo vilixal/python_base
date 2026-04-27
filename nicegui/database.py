@@ -54,18 +54,20 @@ async def get_data(table_name: str, where_dict: dict = None,order: dict = None):
         return [dict(row) for row in rows]
 
 
-async def add_data(table_name: str, data: dict, where: dict = None):
+async def add_data(table_name: str, data: dict):
     if DB_POOL is None:
         await init_pool()
-    columns,values = '',''
+    columns_list,values_list = [],[]
     for key, value in data.items():
         if key != 'id':
-            columns=','.join(key)
-            values=','.join(value)
+            columns_list.append(key)
+            values_list.append(value)
+    columns=','.join(columns_list)
+    placeholders = ','.join([f'${i + 1}' for i in range(len(values_list))])
+    print(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})',values_list)
     async with DB_POOL.acquire() as conn:
-        rows=await conn.fetchrow(f'INSERT INTO {table_name} ({columns}) VALUES ($1) RETURNING id',values)
-        print(f'Вставили в таблицу{table_name} значения {data} под ID = {rows}')
-        return dict(rows)
+        await conn.execute(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})',*values_list)
+        print(f'Вставили в таблицу {table_name} значения {data}')
 
 
 @app.on_shutdown
@@ -78,3 +80,11 @@ async def close_db_pool():
         print("Соединение с БД не может быть закрыто, так как не существует")
 
 
+# создание таблицы
+# CREATE TABLE IF NOT EXISTS server (
+#     id SERIAL PRIMARY KEY,
+#     banklist_id INTEGER REFERENCES banklist(id) ON DELETE CASCADE,
+#     bank_name VARCHAR(255),
+#     server_name VARCHAR(255) NOT NULL,
+#     application_name VARCHAR(255)
+# );
