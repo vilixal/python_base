@@ -4,7 +4,7 @@ from nicegui import events, app, ui
 import asyncio
 
 COLUMN_NAME={'id':'ИД', 'bank_name':'Наименование банка', 'tags':'Тэги', 'status':'Статус', 'modules':'Модули', 'contacts':'Контакты', 'app_version':'Версия приложения', 'db_version':'Версия БД', 'banklist_id':'ИД Банка'
-             , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий'}
+             , 'server_name':'Имя сервера', 'module':'Модуль', 'integration':'Интеграция', 'type':'Тип интеграции', 'comment':'Комментарий','module_name':'Имя модуля'}
 COLUMN_HIDE=[]#'id','tags','server_id','banklist_id']#
 
 TagRenderer = """
@@ -101,18 +101,18 @@ async def main_page():
         server_grid.update()
         module_grid.update()
 
-    async def add_bank():
-        print(list(inputs[x].value for x in banklist_columns_not_id))
+    async def add_rows(table,columns_not_id):
+        print(list(inputs[x].value for x in columns_not_id))
         if not inputs['bank_name']:
             ui.notify('Введите название банка', type='warning')
             return
         banklist_insert_list={}
-        for column in banklist_columns_not_id:
+        for column in columns_not_id:
             banklist_insert_list.update({column: inputs[column].value})
-        await database.add_data('banklist', banklist_insert_list)
-        ui.notify(f'Банк "{inputs['bank_name'].value}" добавлен', type='positive')
+        await database.add_data(table, banklist_insert_list)
+        ui.notify(f'Запись в таблицу "{table}" добавлена', type='positive')
         # Очищаем поля
-        for column in banklist_columns_not_id:
+        for column in columns_not_id:
             inputs[column].value=''
         # Обновляем таблицу
         await update_data()
@@ -200,8 +200,8 @@ async def main_page():
             }).classes('w-full flex-1')
 
 
-        data = {'show_card': False}
-        ui.switch('Показать карточку', value=False).bind_value_to(data, 'show_card')
+        data = {'show_card': True}
+        ui.switch('Показать карточку', value=True).bind_value_to(data, 'show_card')
         with ui.card().classes('w-full').bind_visibility_from(data, 'show_card'):
             ui.label('➕ Добавить банк').classes('text-h6')
             inputs = {}
@@ -211,7 +211,7 @@ async def main_page():
                         inputs[column] = ui.select(['Сопровождение', 'Внедрение', 'Отказался'],value='Сопровождение',label=COLUMN_NAME[column]).props('outlined')
                     else:
                         inputs[column] = ui.input(COLUMN_NAME[column]).props('outlined')
-                ui.button('Добавить', on_click=add_bank, icon='add').props('color=primary')
+                ui.button('Добавить', on_click=lambda: add_rows('banklist',banklist_columns_not_id), icon='add').props('color=primary')
 
     # Загружаем данные при открытии страницы
     await update_data()

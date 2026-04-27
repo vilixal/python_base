@@ -61,7 +61,10 @@ async def add_data(table_name: str, data: dict):
     for key, value in data.items():
         if key != 'id':
             columns_list.append(key)
-            values_list.append(value)
+            if '_id' in key:
+                values_list.append(int(value))
+            else:
+                values_list.append(value)
     columns=','.join(columns_list)
     placeholders = ','.join([f'${i + 1}' for i in range(len(values_list))])
     print(f'INSERT INTO {table_name} ({columns}) VALUES ({placeholders})',values_list)
