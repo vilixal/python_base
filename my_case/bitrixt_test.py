@@ -36,7 +36,7 @@ def user_get():
         else:
             break
     dep_sort={}
-    final_all_user = {}
+    final_all_user = {'328': ['Шевцов', 'iD Systems'],}
     departments=department_get()
     for department_dict in departments["result"]:
         dep_sort[department_dict["ID"]]=department_dict["NAME"]
@@ -48,8 +48,8 @@ def user_get():
 
 def get_tasks():
     url = f"https://{BITRIX24_DOMAIN}/rest/36/{WEBHOOK_TOKEN}/tasks.task.list.json"
-    first_day = datetime(2025, 12, 25)
-    last_day = datetime(2026, 1, 1)
+    first_day = datetime(2026, 4, 1)
+    last_day = datetime(2026, 7, 1)
     first_day_str = first_day.strftime("%Y-%m-%dT%H:%M:%S+03:00")
     last_day_str = last_day.strftime("%Y-%m-%dT%H:%M:%S+03:00")
     all_tasks = []
@@ -132,7 +132,7 @@ for task in report_task:
                 key[0], key[1], key[2], key[3], key[4], key[5],minutes,f"{hours}:{mins:02d}",print_alarm,', '.join(map(str, temp_developer)) if 'Отдел тестирования' in key[0] else ''
             ])
 
-with open('bitrix_final_kv1(dec).csv', 'w', newline='', encoding='cp1251') as out_file:
+with open('bitrix_final_kv2.csv', 'w', newline='', encoding='cp1251') as out_file:
     writer = csv.writer(out_file, quotechar='"', delimiter=';')
     writer.writerow(['Отдел', 'Сотрудник', 'ИД задачи', 'Задача', 'Группа', 'Дата закрытия', 'Время (минуты)','Время (часы)','Внимание! Внутри есть подозирительное время', 'Разработка (для ОТ)'])
     for line in report:
