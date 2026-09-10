@@ -66,8 +66,8 @@ def progress_hook(d):
 
 if __name__ == "__main__":
     # Вариант 1: Задать URL и папку вручную
-    video_url = "https://www.youtube.com/watch?v=eSv9cMJc1Kk"
-    download_folder = "./my_videos"  # Можно указать любой путь
+    video_url = "https://www.youtube.com/watch?v=PV5sZ-57CcU"
+    download_folder = r'E:\Torrent\MediaTorrent\YOUTUBE'  # Можно указать любой путь
 
     download_youtube_video(video_url, download_folder)
 
