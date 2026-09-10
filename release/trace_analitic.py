@@ -1,26 +1,32 @@
 import csv
 import re
+from datetime import datetime
 
 
 def new_line():
-    global timestamp, process_name, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute
-    timestamp, process_id, thread_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute = (
-                                                                                                                                          '',) * 12
+    global timestamp, process_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute
+    timestamp, process_id, thread_number, event, db, attachment, user, process_name, transaction, sql_text, time_execute = (
+                                                                                                                                          '',) * 11
 
 
 lst_trace = []
 first_line_sql = False
-new_line()
-with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='utf8') as file:
+timestamp, db, process_id, thread_number, attachment, user, process_name, transaction, event, time_execute, sql_text = ('Время', 'База данных', 'Идентификатор процесса', 'Номер в рамках потока', 'Attachment',
+          'Пользователь', 'Имя процесса', 'Транзакция', 'Событие', 'Время выполнения в мс',
+          'SQL')
+with open(r'D:\devel\PyCharmProject\python_base\release\trace.txt', encoding='utf8') as file:
     for line in file:
         match_timestamp = re.match(
-            r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{4})\s\((?P<process_id>\d+):(?P<thread_id>\w+)(#(?P<thread_number>\d+))?\)\s(?P<event>[ \w]+)',
+            r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{4})\s\((?P<process_id>[\w:]+)#(?P<thread_number>\d+)?\)\s(?P<event>[ \w]+)',
             line)
         if match_timestamp:
+            lst_trace.append(
+                [timestamp, db, process_id, thread_number, attachment, user, process_name, transaction,
+                 event, time_execute, sql_text.strip()])
             new_line()
             timestamp = match_timestamp.group("timestamp")
-            process_name = match_timestamp.group("process_id")
-            thread_id = match_timestamp.group("thread_id")
+            process_id = match_timestamp.group("process_id")
+            #thread_id = match_timestamp.group("thread_id")
             thread_number = match_timestamp.group("thread_number")
             event = match_timestamp.group("event")
             continue
@@ -31,11 +37,11 @@ with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='ut
             attachment = match_att.group('attachment')
             user = match_att.group('user')
             continue
-        match_proc = re.search(r'^\s*(?P<process_name>[-_a-zA-Zа-яА-Я\d\s\[\]().:,\'"]+):[-]?\d+$', line)
+        match_proc = re.search(r'^\s*(?P<process_name>[-_a-zA-Zа-яА-Я\d\s\[\]/\\().:,\'"]+):[-]?\d+$', line)
         if match_proc:
             process_name = match_proc.group('process_name')
             continue
-        match_transaction = re.search(r'\(TRA_(?P<transaction>\d+),\s\w+\s\|\s\w+\s\|\s\w+\s\d+\s\|\s\w+\)$', line)
+        match_transaction = re.search(r'\(TRA_(?P<transaction>\d+),[\s\w|]+\)$', line)
         if match_transaction:
             transaction = match_transaction.group('transaction')
             continue
@@ -63,15 +69,9 @@ with open(r'D:\devel\PyChampProject\python_base\release\trace.txt', encoding='ut
         match_execute = re.search(r'\s+(?P<time_execute>\d+)\sms[\s,]', line)
         if match_execute:
             time_execute = match_execute.group('time_execute')
-            lst_trace.append(
-                [timestamp, db, process_name, thread_id, thread_number, attachment, user, process_name, transaction,
-                 event, time_execute, sql_text.strip()])
 
-HEADER = ['Время', 'База данных', 'Идентификатор процесса', 'Поток', 'Номер в рамках потока', 'Attachment',
-          'Пользователь', 'Имя процесса', 'Транзакция', 'Событие', 'Время выполнения в мс',
-          'SQL']
-with open('trace.csv', 'w', newline='', encoding='cp1251') as out_file:
+
+with open(f'trace_{datetime.now():%Y-%m-%d_%H-%M-%S}.csv', 'w', newline='', encoding='cp1251') as out_file:
     writer = csv.writer(out_file, quotechar='"', delimiter=';')
-    writer.writerow(HEADER)
     for line in lst_trace:
         writer.writerow(line)
