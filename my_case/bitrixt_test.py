@@ -36,7 +36,7 @@ def user_get():
         else:
             break
     dep_sort={}
-    final_all_user = {'328': ['Шевцов', 'iD Systems'],}
+    final_all_user = {'328': ['Шевцов', 'iD Systems'],'398': ['Сылка', 'iD Systems']}
     departments=department_get()
     for department_dict in departments["result"]:
         dep_sort[department_dict["ID"]]=department_dict["NAME"]
@@ -48,8 +48,8 @@ def user_get():
 
 def get_tasks():
     url = f"https://{BITRIX24_DOMAIN}/rest/36/{WEBHOOK_TOKEN}/tasks.task.list.json"
-    first_day = datetime(2026, 4, 1)
-    last_day = datetime(2026, 7, 1)
+    first_day = datetime(2026, 7, 1)
+    last_day = datetime(2026, 10, 1)
     first_day_str = first_day.strftime("%Y-%m-%dT%H:%M:%S+03:00")
     last_day_str = last_day.strftime("%Y-%m-%dT%H:%M:%S+03:00")
     all_tasks = []
