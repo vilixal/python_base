@@ -53,6 +53,7 @@ def _progress(total_bytes, done_bytes, start_time):
     """Печатает строку прогресса в одну строку."""
     if total_bytes <= 0:
         return
+    # защита от случая, когда винда возвращает в done_bytes 2^64 значение
     if done_bytes>total_bytes:
         done_bytes = total_bytes
     pct = min(100.0, done_bytes * 100.0 / total_bytes)
@@ -77,7 +78,7 @@ def parse_trace(target: Path):
     start_ts = datetime.now().timestamp()
     last_update = 0.0
 
-    # Поля текущей записи
+    # Поля первой записи
     timestamp, db, process_id, thread_number, attachment, user, process_name, transaction, event, time_execute, sql_text = (
         'Время', 'База данных', 'Идентификатор процесса', 'Номер в рамках потока', 'Attachment',
         'Пользователь', 'Имя процесса', 'Транзакция', 'Событие', 'Время выполнения в мс',
@@ -89,6 +90,12 @@ def parse_trace(target: Path):
             process_name, transaction, event, time_execute,
             ' '.join(sql_parts).strip() if sql_parts else sql_text.strip(),
         ])
+
+    #пишем первую строку и зануляем timestamp
+    flush_record()
+    timestamp = db = process_id = thread_number = attachment = user = ''
+    process_name = transaction = event = time_execute = ''
+    sql_text = ''
 
     with open(target, "r", encoding="utf-8", errors="replace") as file:
         while True:
