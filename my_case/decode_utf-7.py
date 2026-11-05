@@ -37,7 +37,7 @@ def decode_imap_utf7(s):
 
 if __name__ == '__main__':
     print(decode_imap_utf7('&BBwEMARCBDIENQQ1BDI-'))
-    # (\HasNoChildren \Unmarked)
+    # (\HasNoChildren \Unmarked) 15655
     # "|" "&BB4EMQRJBDUENQ-"
     # (\HasNoChildren \Unmarked)
     # "|" "&BBIEMARBBDgEOwRMBDUEMg-"

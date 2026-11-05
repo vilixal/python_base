@@ -91,9 +91,6 @@ def main():
             match_sql = re.search(r'[-]{79}',
                                   line)  # SQL текст заключен между символами ---- и ^^^^. Определяем конец и начало SQL
             match_end_sql = re.search(r'[\^]{79}', line)
-            if match_end_sql:
-                first_line_sql = False
-                continue
             match_end_sql = re.search(r'\d+ records fetched without sorting', line)
             if match_end_sql:
                 first_line_sql = False

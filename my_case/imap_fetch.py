@@ -8,8 +8,8 @@ import time
 IMAP_SERVER = 'imap.yandex.ru'
 EMAIL_ACCOUNT = 'support@id-sys.ru'
 PASSWORD = 'qcnrsphdfgjxwlpw'  # Для Яндекса лучше использовать пароль приложения
-SOURCE_FOLDER = '&BBwEMARCBDIENQQ1BDI-'
-QUARANTINE_FOLDER = 'Quarantine_Broken|matv_q'  # Папка, куда будем складывать "битые" письма
+SOURCE_FOLDER = 'Templates'
+QUARANTINE_FOLDER = 'Quarantine_Broken|temp'  # Папка, куда будем складывать "битые" письма
 
 # Список UID, которые нужно проверить (из ваших логов Thunderbird)
 #TARGET_UIDS = [416, 420, 421, 422]
@@ -66,7 +66,7 @@ def process_emails():
     TARGET_UIDS=uid_list
 
     for uid in TARGET_UIDS:
-        # if uid<7081:
+        # if uid<400:
         #     continue
             
         print(f"\n--- Проверка UID: {uid} ---")
