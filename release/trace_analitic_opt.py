@@ -80,8 +80,8 @@ def parse_trace(target: Path):
 
     # Поля первой записи
     timestamp, db, process_id, thread_number, attachment, user, process_name, transaction, event, time_execute, sql_text = (
-        'Время', 'База данных', 'Идентификатор процесса', 'Номер в рамках потока', 'Attachment',
-        'Пользователь', 'Имя процесса', 'Транзакция', 'Событие', 'Время выполнения в мс',
+        'Время события', 'База данных', 'Идентификатор процесса', 'Номер в рамках потока', 'Attachment',
+        'Пользователь', 'Имя процесса', 'Транзакция', 'Событие', 'Время(мс)',
         'SQL')
 
     def flush_record():
