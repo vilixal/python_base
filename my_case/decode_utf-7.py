@@ -36,16 +36,16 @@ def decode_imap_utf7(s):
     return ''.join(res)
 
 if __name__ == '__main__':
-    print(decode_imap_utf7('&BBwEMARCBDIENQQ1BDI-'))
+    print(decode_imap_utf7('&BB4EMQRJBDUENQ-'))
     # (\HasNoChildren \Unmarked) 15655
-    # "|" "&BB4EMQRJBDUENQ-"
+    # "|" "&BB4EMQRJBDUENQ-" Общее
     # (\HasNoChildren \Unmarked)
     # "|" "&BBIEMARBBDgEOwRMBDUEMg-"
     # (\HasNoChildren \Unmarked)
-    # "|" "&BBgEOwRMBDgEPQ-"
+    # "|" "&BBgEOwRMBDgEPQ-" ильин
     # (\HasNoChildren \Unmarked)
-    # "|" "&BBoEQwQ7BDgEOgQ+BDI-"
+    # "|" "&BBoEQwQ7BDgEOgQ+BDI-" куликов
     # (\HasNoChildren \Marked)
-    # "|" "&BBwEMARCBDIENQQ1BDI-"
+    # "|" "&BBwEMARCBDIENQQ1BDI-" Матвеев
     # (\HasNoChildren \Unmarked)
-    # "|" "&BCEEQgQwBEAEPgQyBD4EOQRCBD4EMg-"
+    # "|" "&BCEEQgQwBEAEPgQyBD4EOQRCBD4EMg-"Старовойтов

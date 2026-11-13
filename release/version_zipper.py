@@ -23,6 +23,7 @@ UPDATES_DIR = r"\\192.168.1.189\support\LocalUser\Public\updates\test"
 
 VERSION_RE = re.compile(r"^\d+(\.\d+){3}$")
 PASSWORD_PREFIX = "UPD"
+PASSWORD_DICT={1:'Q',2:'W',3:'E',4:'R',5:'T',6:'Y',7:'U',8:'I',9:'O',0:'P'}
 
 LOG_FILE = Path(__file__).with_name("archive_build.log")
 

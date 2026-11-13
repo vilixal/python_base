@@ -8,8 +8,18 @@ import time
 IMAP_SERVER = 'imap.yandex.ru'
 EMAIL_ACCOUNT = 'support@id-sys.ru'
 PASSWORD = 'qcnrsphdfgjxwlpw'  # Для Яндекса лучше использовать пароль приложения
-SOURCE_FOLDER = 'Templates'
-QUARANTINE_FOLDER = 'Quarantine_Broken|temp'  # Папка, куда будем складывать "битые" письма
+# SOURCE_FOLDER = '&BB4EMQRJBDUENQ-'
+# QUARANTINE_FOLDER = 'Quarantine_Broken|obsh_q'
+# SOURCE_FOLDER = '&BCEEQgQwBEAEPgQyBD4EOQRCBD4EMg-'
+# QUARANTINE_FOLDER = 'Quarantine_Broken|star_q'
+SOURCE_FOLDER = 'Sent'
+QUARANTINE_FOLDER = 'Quarantine_Broken|send_q'
+# SOURCE_FOLDER = '&BBwEMARCBDIENQQ1BDI-'
+# QUARANTINE_FOLDER = 'Quarantine_Broken|matv_q'
+# SOURCE_FOLDER = '&BBgEOwRMBDgEPQ-'
+# QUARANTINE_FOLDER = 'Quarantine_Broken|ilin_q'
+# SOURCE_FOLDER = '&BBoEQwQ7BDgEOgQ+BDI-'
+# QUARANTINE_FOLDER = 'Quarantine_Broken|kul_q'
 
 # Список UID, которые нужно проверить (из ваших логов Thunderbird)
 #TARGET_UIDS = [416, 420, 421, 422]
@@ -63,10 +73,11 @@ def process_emails():
     else:
         print(f"Ошибка поиска: {data}")
 
-    TARGET_UIDS=uid_list
+    TARGET_UIDS=[78686]#uid_list
+    BAD_UIDS=[]
 
     for uid in TARGET_UIDS:
-        # if uid<400:
+        # if uid<13365:
         #     continue
             
         print(f"\n--- Проверка UID: {uid} ---")
@@ -105,12 +116,13 @@ def process_emails():
 
             except Exception as e:
                 print(f"[ОШИБКА ПАРСИНГА] Сервер отдал данные, но письмо повреждено: {e}")
-                move_to_quarantine(mail, uid)
+                #move_to_quarantine(mail, uid)
         else:
             # Если сервер вернул NO или BAD — письмо не читается
             print(f"[ОШИБКА ЧТЕНИЯ] Сервер не смог отдать письмо UID {uid}. Ответ: {data}")
             move_to_quarantine(mail, uid)
-
+            BAD_UIDS.append(uid)
+            print(BAD_UIDS)
     mail.logout()
 
 
