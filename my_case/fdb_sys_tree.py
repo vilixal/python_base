@@ -24,16 +24,18 @@ def get_all_relations():
         WHERE sobj_kind = 'TBL' and sobj_name = ?
     """
     sql_links = """        
-            SELECT sobj_name, soln_type, sobj_name_dest
-            FROM sys_objlink
-            WHERE (soln_type = 'CHD' or soln_type = 'DET' or soln_type = 'OWN') and soln_subsystem='BANK_CLIENT' and sobj_name = ?
+            SELECT sln.sobj_name, sln.soln_type, sln.sobj_name_dest
+            FROM sys_objlink sln
+            join sys_objects so on sln.SOBJ_NAME_DEST=so.sobj_name
+            WHERE (sln.soln_type = 'CHD' or sln.soln_type = 'OWN') and so.sobj_subsystem <> 'NCORE' and sln.sobj_name = ? and (so.sobj_is_system <> 1 or so.sobj_is_system is null) and so.sobj_kind='TBL' --or sln.soln_type = 'DET'-дает верхние объекты (из запроса в пакет)
             union all
-            SELECT sobj_name, soln_type, sobj_name_dest
-            FROM sys_objlink
-            WHERE (soln_type = 'CHD' or soln_type = 'DET' or soln_type = 'OWN') and soln_subsystem='BANK_CLIENT' and SOBJ_NAME_DEST = ?
+            SELECT sln.sobj_name, sln.soln_type, sln.sobj_name_dest
+            FROM sys_objlink sln
+            join sys_objects so on sln.sobj_name=so.sobj_name
+            WHERE (sln.soln_type = 'CHD' or sln.soln_type = 'DET') and so.sobj_subsystem<>'NCORE' and sln.SOBJ_NAME_DEST = ? and (so.sobj_is_system <> 1 or so.sobj_is_system is null) and so.sobj_kind='TBL' --or sln.soln_type = 'OWN' тоже
         """
-    # OWN (от главного объекта к подчиненному) OWN – сноска
-    # DET (от подчиненного к главному) DET-Детейл
+    # OWN (от главного объекта к подчиненному) OWN – сноска (в главном объекте есть ИД, ссылающийся на другой подчиненный объект (вроде как 1 к 1))
+    # DET (от подчиненного к главному) DET-Детейл (то есть ИД в подчиненном ссылается на гланвый (много к 1)
     # CHD (от подчиненного к главному) CHD-Потомок
     for obj in LIST_LINK:
         print(f'=== Проверяем {obj} ===')
